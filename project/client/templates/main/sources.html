@@ -1,0 +1,40 @@
+{% extends "_base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+  <div>
+    <h3>
+        Music Subreddits
+    </h3>
+  </div>
+
+
+<form class='form' role='form' method="post" action="{{ url_for('main.add_sources')}}">
+
+    {{ form.csrf_token }}
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens='only') }}
+
+    <div class='row'>
+    <div class="col-lg-6 col-sm-6">
+      {# {{ form.content }} #}
+      {# {{ form.follow_sources(cols="35", rows="20")|safe}} #}
+      {{ form.follow_sources(_class='long-list') }}
+
+      {# {{ wtf.form_field(form.follow_sources) }} #}
+      {# {{ wtf.form_field(form.subreddit) }} #}
+
+
+
+    <br><br>
+    </div>
+    </div>
+    <br><br>
+    <div class='row'>
+    <button type="submit" class="btn btn-success">Follow</button>  
+    </div>
+</form>
+<br><br>
+
+      
+
+{% endblock content %}  

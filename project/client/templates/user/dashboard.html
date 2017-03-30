@@ -1,0 +1,104 @@
+{% extends "_base.html" %}
+{% block content %}
+
+
+<h1> {{ user.email }} Dashboard</h1>
+
+
+{% if not user.feeds %}
+
+
+<div>
+    <h3>
+        It looks like you havent added any feeds.
+        Head over to the <a href="{{ url_for('main.sources') }}">Feed Sources</a> to subscribe to some tunes!
+    </h3>
+</div>
+
+{% endif %}
+
+
+
+
+
+{# <iframe width="720" height="405" src="https://www.youtube.com/embed/VIDEO_ID?playlist=VIDEOID_1,VIDEOID_2"frameborder="0" allowfullscreen>
+ #}
+<iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2Ftreethought&color=orange_white&size=32" style="width: 32px; height: 32px;"></iframe>
+
+<script>
+(function(d){
+  var iframe = d.body.appendChild(d.createElement('iframe')),
+  doc = iframe.contentWindow.document;
+
+  // style the iframe with some CSS
+  iframe.style.cssText = "position:absolute;width:200px;height:100px;left:0px;";
+  
+  doc.open().write('<body onload="' + 
+  'var d = document;d.getElementsByTagName(\'head\')[0].' + 
+  'appendChild(d.createElement(\'script\')).src' + 
+  '=\'\/path\/to\/file\'">');
+  
+  doc.close(); //iframe onload event happens
+
+  })(document);
+</script>
+{# for seperate #}
+<div class="container-fluid">
+    {% for post in by_domain['youtube'] %}
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-xs-3">
+                      <iframe width="25" height="25" src="https://www.youtube.com/embed/{{post.video_id}}" frameborder="0" allowfullscreen></iframe>
+                </div>
+                
+                <div class="col-xs-3">
+                    <a href="{{post.url}}">{{post.title}}</a>
+
+                </div>
+        
+            </div>
+        </div>
+          
+    {% endfor %}
+    <div class="row">
+    
+
+
+            
+        </div>
+
+    </div>
+</div>
+
+
+
+
+{# FOR PLAYLIST #}
+{# 
+{% set playlist_src = ["https://www.youtube.com/embed/"] %}
+
+{% for post in by_domain['youtube'] %}
+
+    {% if loop.first %}
+        {% if playlist_src.append(post.video_id + "?playlist=") %}{% endif %} 
+        
+        
+    {% elif loop.index == 2 %}
+        {% if playlist_src.append(post.video_id) %}{% endif %}
+
+    {% else %}
+        {% if playlist_src.append(',' + post.video_id) %}{% endif %}
+            
+    {% endif %}
+     
+{% endfor %} #}
+
+
+{# <iframe width="200" height="200" src="{{ playlist_src|join('') }}" frameborder="0" allowfullscreen></iframe> #}
+
+
+
+
+{% endblock %}  

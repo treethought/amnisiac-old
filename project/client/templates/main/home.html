@@ -1,0 +1,45 @@
+{% extends "_base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block content %}
+
+<div class="body-content">
+  <div class="row">
+    <h1>Welcome!</h1>
+
+    <div>
+        <h3>
+            To get started enter the name of a subreddit you'd like to see
+        </h3>
+    </div>
+
+{# {% if current_user.is_authenticated %} #}
+<form class="form" role="form" method="post" action="{{ url_for('main.results') }}">
+
+    {{ form.csrf_token }}
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens="only") }}
+
+    <div class="col-lg-4 col-sm-4">
+
+      {{ wtf.form_field(form.subreddit) }}
+
+      <button class="btn btn-success" type="submit">Test</button>
+      <br><br>
+    </div>
+
+</form>
+</div>
+
+<br><br>
+<div class="col-lg-4 col-sm-4">
+  <h4>
+    Or select subreddits from the <a href="{{ url_for('main.sources') }}">list</a>
+  </h4>
+</div>
+
+    
+    
+</div>
+  
+
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "_base.html" %}
+{% block content %}
+
+
+<div>
+    <h3>
+        Hot Posts from {{ subreddit }}
+    </h3>
+</div>
+<center>
+<div class='result-list'>
+{% for post in submissions %}
+    <col>
+    {{post.title}}
+    <col>
+    {{post.url}}
+    <a href="{{post.url}}">{{post.title}}</a>
+
+    <br><br>
+</div>
+{% endfor %}
+</center>
+
+{% endblock %}
