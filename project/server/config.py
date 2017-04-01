@@ -27,7 +27,7 @@ class DevelopmentConfig(BaseConfig):
     DEBUG_TB_ENABLED = True
     SEND_FILE_MAX_AGE_DEFAULT = 0 # for refeshing static files
 
-class StagingProduction(BaseConfig):
+class StagingConfig(BaseConfig):
     """docstring for StagingProduction"""
     DEVELOPMENT = True
     DEBUG = True
