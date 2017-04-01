@@ -30,6 +30,8 @@ app = Flask(
 
 app_settings = os.getenv('APP_SETTINGS', 'project.server.config.DevelopmentConfig')
 app.config.from_object(app_settings)
+print(os.environ['APP_SETTINGS'])
+
 
 
 ####################
