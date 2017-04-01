@@ -7,18 +7,26 @@
         Hot Posts from {{ subreddit }}
     </h3>
 </div>
-<center>
-<div class='result-list'>
-{% for post in submissions %}
-    <col>
-    {{post.title}}
-    <col>
-    {{post.url}}
-    <a href="{{post.url}}">{{post.title}}</a>
 
-    <br><br>
+<div class="container-fluid feed-list">
+    {% for post in by_domain['youtube'] %}
+    <div class="row">
+
+        <div class="youtube-item col-sm-1" data-video="{{post.video_id}}" data-autoplay="0" data-loop="1" id="youtube-audio-{{loop.index0}}">
+        </div>
+
+        <div class="col-sm-4en">
+            <a href="{{post.url}}">{{post.title}}</a>
+        </div>
+
+    </div>
+    {% endfor %}
+
 </div>
-{% endfor %}
-</center>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="{{url_for('static', filename='youtube.js')}}"></script>
 
 {% endblock %}

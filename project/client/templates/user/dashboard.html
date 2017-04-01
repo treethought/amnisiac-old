@@ -1,8 +1,9 @@
 {% extends "_base.html" %} {% block content %}
 
 
-<h1> {{ user.email }} Dashboard</h1> {% if not user.feeds %}
+<h1> {{ user.email }} Dashboard</h1> 
 
+{% if not user.feeds %}
 
 <div>
     <h3>
@@ -13,11 +14,24 @@
 
 {% endif %}
 
+<div class="container">
+    Showing items from:
+    <br><br>
+    <ul>
+   {% for feed in user.feeds %}
+
+        <li><a href="{{feed.url}}">{{feed.name}}</a></li>
+       
+   {% endfor %}
+   </ul>
+        
+</div>
+
  {# <iframe width="720" height="405" src="https://www.youtube.com/embed/VIDEO_ID?playlist=VIDEOID_1,VIDEOID_2" frameborder="0" allowfullscreen>
  #}
 {# <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2Ftreethought&color=orange_white&size=32" style="width: 32px; height: 32px;"></iframe> #}
 
-<div class="container-fluid">
+<div class="container-fluid feed-list">
     {% for post in by_domain['youtube'] %}
     <div class="row">
 
@@ -25,7 +39,7 @@
         </div>
 
         <div class="col-sm-4en">
-            {{post.title}}
+            <a href="{{post.url}}">{{post.title}}</a>
         </div>
 
     </div>
@@ -43,7 +57,4 @@
 <script src="{{url_for('static', filename='youtube.js')}}"></script>
 
 
-
-
-{# FOR PLAYLIST #} {# {% set playlist_src = ["https://www.youtube.com/embed/"] %} {% for post in by_domain['youtube'] %} {% if loop.first %} {% if playlist_src.append(post.video_id + "?playlist=") %}{% endif %} {% elif loop.index == 2 %} {% if playlist_src.append(post.video_id)
-%}{% endif %} {% else %} {% if playlist_src.append(',' + post.video_id) %}{% endif %} {% endif %} {% endfor %} #} {# <iframe width="200" height="200" src="{{ playlist_src|join('') }}" frameborder="0" allowfullscreen></iframe> #} {% endblock %}
+{% endblock %}
