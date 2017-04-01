@@ -9,7 +9,7 @@ from flask import render_template, Blueprint, request, redirect, make_response, 
 from flask_login import login_required, current_user
 
 from project.server.main.forms import PostForm, SourcesForm
-from project.server.scrapers.reddit_links import hot_posts, wiki_subs
+from project.server.scrapers.reddit_links import hot_posts, wiki_subs, split_by_domain
 from project.server.models import User, Feed, get_or_create
 from project.server import db
 
@@ -51,8 +51,8 @@ def results():
     if form.validate_on_submit():
         subreddit = form.subreddit.data
         submissions = hot_posts(subreddit)
-        # submissions = hot_posts('mathrock')
-        return render_template('main/results.html', subreddit=subreddit, submissions=submissions)
+        by_domain = split_by_domain(submissions)
+        return render_template('main/results.html', subreddit=subreddit, by_domain=by_domain)
 
 @main_blueprint.route('/sources', methods=['GET', 'POST'])
 def sources():
