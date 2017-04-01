@@ -23,6 +23,8 @@ class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = 'postgresql://cam@localhost:5432/music'
     # SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'dev.sqlite')
     DEBUG_TB_ENABLED = True
+    SEND_FILE_MAX_AGE_DEFAULT = 0
+
 
 
 class TestingConfig(BaseConfig):

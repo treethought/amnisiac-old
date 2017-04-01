@@ -66,15 +66,11 @@ def split_by_domain(submissions):
     domains = {'youtube': [], 'vimeo': []}
     yt_posts = [p for p in submissions if 'you' in p.domain]
     for p in [p for p in yt_posts if p.video_id]:
-        if len(p.video_id) == 11:
-            print(p.video_id)
-            print('***********')
+        if len(p.video_id) == 11: # ensure id is valid 11-char
             domains['youtube'].append(p)
 
-
-    # domains['youtube'] = [p for p in submissions if 'you' in p.domain and p.video_id and len(p.video_id) == 11]
     domains['vimeo'] = [p for p in submissions if 'vim' in p.domain]
-    print(domains)
+
     return domains
 
 @user_blueprint.route('/dashboard')
@@ -90,8 +86,6 @@ def dashboard():
         submissions = hot_posts(sub_query)
         by_domain = split_by_domain(submissions)
 
-
-    print('RENDERING FOR {} submissions'.format(len(submissions)))
     return render_template('user/dashboard.html', user=current_user, by_domain=by_domain)
 
     # else:
