@@ -12,8 +12,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from project.server import bcrypt, db
 from project.server.models import User
 from project.server.user.forms import LoginForm, RegisterForm
-from project.server.scrapers.reddit_links import hot_posts
-from project.server.scrapers.video_ids import vimeo_id, youtube_id
+from project.server.scrapers.reddit_links import hot_posts, split_by_domain
 ################
 #### config ####
 ################
@@ -61,17 +60,6 @@ def login():
             flash('Invalid email and/or password.', 'danger')
             return render_template('user/login.html', form=form)
     return render_template('user/login.html', title='Please Login', form=form)
-
-def split_by_domain(submissions):
-    domains = {'youtube': [], 'vimeo': []}
-    yt_posts = [p for p in submissions if 'you' in p.domain]
-    for p in [p for p in yt_posts if p.video_id]:
-        if len(p.video_id) == 11: # ensure id is valid 11-char
-            domains['youtube'].append(p)
-
-    domains['vimeo'] = [p for p in submissions if 'vim' in p.domain]
-
-    return domains
 
 @user_blueprint.route('/dashboard')
 @login_required

@@ -22,12 +22,11 @@ def hot_posts(sub):
             if post.media:
                 post.video_id = get_video_id(post.domain, post.url)
                 result.append(post)
-                # print(post.video_id)
+
     except praw.exceptions.PRAWException as e:
         print('No subreddit found for {}'.format(sub))
-        print(e)
     return result
-        # yield submission.title
+
 
 def get_audio(post_url):
     if 'youtube' in post_url:
@@ -46,38 +45,18 @@ def wiki_subs(sub, wiki_name):
     return sub_names
 
 
-        
+def split_by_domain(submissions):
+    domains = {'youtube': [], 'vimeo': []}
+    yt_posts = [p for p in submissions if 'you' in p.domain]
+    for p in [p for p in yt_posts if p.video_id]:
+        if len(p.video_id) == 11:  # ensure id is valid 11-char
+            domains['youtube'].append(p)
+
+    domains['vimeo'] = [p for p in submissions if 'vim' in p.domain]
+
+    return domains
 
 
-# def wiki_subs(subreddit, wiki_name):
-#     # subs = []
-#     # wiki_url = 'https://www.reddit.com/r/{}/wiki/{}'.format(subreddit, wiki_name)
-#     # resp = requests.get(wiki_url)
-#     # resp.raise_for_status
-#     print(resp.status_code)
-#     soup = bs(resp.content, 'html.parser')
-#     items = soup.select('li > a')
-#     with open('music_subs.txt', 'w+') as f:
-#         for i in items:
-#             url = i.get('href')
-#             if '/r/' in url[:3]:
-#                 sub_name = url.strip('/r/')
-#                 subs.append(sub_name)
-#                 f.write(sub_name+'\n')
-
-
-    # print(subs)
-    # return subs
-
-def st():
-    for submission in reddit.subreddit('news').stream.submissions():
-        print(submission)
-
-
-
-if __name__ == '__main__':
-    # wiki_subs('music', 'musicsubreddits')
-    st()
 
 
 
