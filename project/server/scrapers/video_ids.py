@@ -47,5 +47,4 @@ def youtube_id(url):
             return query.path.split('/')[2]
     elif 'youtu.be' in query.hostname:
         return query.path[1:]
-    else:
-        raise ValueError
+
