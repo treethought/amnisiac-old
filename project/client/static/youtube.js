@@ -43,17 +43,36 @@ function onYouTubeIframeAPIReady() {
         };
         console.log('Added iconSource to player');
 
+        var setNowPlayingImg = function (videoId) {
+            var playingImg = document.getElementById('now-playing-thumb');
+            var playingInfo = document.getElementById('now-playing-info');
+            console.log('Setting image for ' + videoId);
+            var imgUrl = "http://img.youtube.com/vi/"+videoId+"/0.jpg";
+            var title = document.getElementById('post-title-'+videoId).innerHTML;
+            playingImg.setAttribute('src', imgUrl);
+            playingInfo.innerHTML = title;
+
+
+
+
+
+
+        }
+
+
         elem.onclick = function() {
         if (player.getPlayerState() === YT.PlayerState.PLAYING
             || player.getPlayerState() === YT.PlayerState.BUFFERING) {
 
             player.pauseVideo();
             toggleButon(false);
+            
 
         }
         else {
             player.playVideo();
             toggleButon(true);
+            setNowPlayingImg(elem.dataset.video)
 
         }
     };

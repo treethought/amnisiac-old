@@ -31,20 +31,36 @@
  #}
 {# <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2Ftreethought&color=orange_white&size=32" style="width: 32px; height: 32px;"></iframe> #}
 
-<div class="container-fluid feed-list">
+
+
+<div class="container-fluid feed-list col-sm-8">
     {% for post in by_domain['youtube'] %}
     <div class="row">
 
-        <div class="youtube-item col-sm-1" data-video="{{post.video_id}}" data-autoplay="0" data-loop="1" id="youtube-audio-{{post.video_id}}">
+        <div class="youtube-item col-sm-2" data-video="{{post.video_id}}" data-autoplay="0" data-loop="1" id="youtube-audio-{{post.video_id}}">
         </div>
 
-        <div class="col-sm-4en">
+        <div class="col-sm-6" id="post-title-{{post.video_id}}">
             <a href="{{post.url}}">{{post.title}}</a>
         </div>
 
+  {#       <div class="col-sm">
+            <img src="http://img.youtube.com/vi/{{post.video_id}}/0.jpg" height='80px' width='80px'>
+              
+        </div> #}
+
     </div>
     {% endfor %}
+</div>
 
+
+
+
+<div class="now-playing-display container col-sm-4">
+  <h2>Now Paying</h2>
+    <img id='now-playing-thumb' src="" height='full' width='full'>
+    <h4 id='now-playing-info'></h4>
+              
 </div>
 
 
