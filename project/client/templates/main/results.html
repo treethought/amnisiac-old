@@ -8,29 +8,31 @@
     </h3>
 </div>
 
-<div class="container-fluid feed-list col-sm-8">
+<div class="container-fluid feed-list col-sm-7">
     {% for post in by_domain['youtube'] %}
-    <div class="row">
 
-        <div class="youtube-item col-sm-2" data-video="{{post.video_id}}" data-autoplay="0" data-loop="1" id="youtube-audio-{{post.video_id}}">
+
+    <div class="row" id="{{post.video_id}}">
+
+    <div>
+
+        <div class="col-sm-2 post-item" id="{{post.video_id}}">
+            {# <img class='post-icon' src="" id="{{post.video_id}}-icon"> #}
         </div>
 
-        <div class="col-sm-6" id="post-title-{{post.video_id}}">
+        <div class="col-sm-5 post-title" id="{{post.video_id}}-title">
             <a href="{{post.url}}">{{post.title}}</a>
         </div>
 
     </div>
+    </div>
     {% endfor %}
 </div>
 
-
-
-
 <div class="now-playing-display container col-sm-4">
-  <h2>Now Paying</h2>
-    <img id='now-playing-thumb' src="" height='full' width='full'>
-    <h4 id='now-playing-info'></h4>
-              
+    <h2>Now Playing...</h2>
+    <div class="youtube-player" data-video="" data-autoplay="0" data-loop="1" id="youtube-player">
+    </div>
 </div>
 
 
