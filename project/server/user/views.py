@@ -72,7 +72,7 @@ def dashboard():
         sub_query += feed.name.strip('/r/') + '+'
 
     if sub_query:
-        submissions = hot_posts(sub_query)[:10]
+        submissions = hot_posts(sub_query)
         by_domain = split_by_domain(submissions)
 
     return render_template('user/dashboard.html', user=current_user, by_domain=by_domain)
