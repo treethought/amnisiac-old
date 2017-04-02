@@ -1,10 +1,11 @@
 
-
 var player = null;
 
 function onYouTubeIframeAPIReady() {
 
-
+    // player = function () {
+    //     return YT.get('youtube-player');
+    // }
     console.log(player)
 
     console.log('In youtubeready');
@@ -90,10 +91,10 @@ function onYouTubeIframeAPIReady() {
         })
 
 
-
+        // body...
 
         function renderPlayer(postVideoID) {
-  
+
             console.log('rendering for ' + postVideoID);
 
             player = new YT.Player("youtube-player", {
@@ -127,5 +128,10 @@ function onYouTubeIframeAPIReady() {
 
 
 
+
         };
+
+    });
+
+}
 
