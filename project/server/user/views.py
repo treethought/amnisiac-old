@@ -13,6 +13,7 @@ from project.server import bcrypt, db
 from project.server.models import User
 from project.server.user.forms import LoginForm, RegisterForm
 from project.server.scrapers.reddit_links import hot_posts, split_by_domain
+
 ################
 #### config ####
 ################
@@ -71,7 +72,7 @@ def dashboard():
         sub_query += feed.name.strip('/r/') + '+'
 
     if sub_query:
-        submissions = hot_posts(sub_query)
+        submissions = hot_posts(sub_query)[:10]
         by_domain = split_by_domain(submissions)
 
     return render_template('user/dashboard.html', user=current_user, by_domain=by_domain)

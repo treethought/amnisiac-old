@@ -14,14 +14,37 @@
     {{ form.hidden_tag() }}
     {{ wtf.form_errors(form, hiddens='only') }}
 
-    <div class='row'>
-    <div class="col-lg-6 col-sm-6">
+{#     <div class='row'>
+    <div class="col-lg-6 col-sm-6"> #}
       {# {{ form.content }} #}
-      {# {{ form.follow_sources(cols="35", rows="20")|safe}} #}
-      {{ form.follow_sources(_class='long-list') }}
+      {# {{ form.follow_sources(cols="3")|safe}} #}
+      {# {{ form.follow_sources(class='table table-inverse', thead_class='thead-default') }} #}
 
-      {# {{ wtf.form_field(form.follow_sources) }} #}
-      {# {{ wtf.form_field(form.subreddit) }} #}
+
+
+
+      
+      
+      <table class="table table-invert">
+        <thead cleass='thead-default'>
+          <tr>
+            <th>{{form.follow_sources.label}}</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for subfield in form.follow_sources %}
+          <tr>
+            <td>{{subfield}}{{subfield.data}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+        
+      
+      
+      
+
+
 
 
 
