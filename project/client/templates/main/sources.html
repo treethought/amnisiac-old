@@ -8,7 +8,7 @@
   </div>
 
 
-<form class='form' role='form' method="post" action="{{ url_for('main.add_sources')}}">
+<form class='form' role='form' method="post" action="{{ url_for('user.add_sources')}}">
 
     {{ form.csrf_token }}
     {{ form.hidden_tag() }}
@@ -20,13 +20,13 @@
       {# {{ form.follow_sources(cols="3")|safe}} #}
       {# {{ form.follow_sources(class='table table-inverse', thead_class='thead-default') }} #}
 
-
+    {{ wtf.form_field(form.search_bar)}}
 
 
       
       
       <table class="table table-invert">
-        <thead cleass='thead-default'>
+        <thead class='thead-default'>
           <tr>
             <th>{{form.follow_sources.label}}</th>
           </tr>
@@ -39,14 +39,6 @@
           {% endfor %}
         </tbody>
       </table>
-        
-      
-      
-      
-
-
-
-
 
     <br><br>
     </div>
