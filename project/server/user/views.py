@@ -28,6 +28,41 @@ user_blueprint = Blueprint('user', __name__,)
 #### routes ####
 ################
 
+@user_blueprint.route('/dashboard')
+@login_required
+def dashboard():
+    feed_data = {}
+    sub_query = ''
+    by_domain = {}
+    for feed in current_user.feeds:
+        sub_query += feed.name.strip('/r/') + '+'
+
+    if sub_query:
+        submissions = hot_posts(sub_query)
+        by_domain = split_by_domain(submissions)
+        
+
+    return render_template('user/dashboard.html', user=current_user, by_domain=by_domain)
+
+
+
+@user_blueprint.route('/add_sources', methods=['POST'])
+@login_required
+def add_sources():
+    form = SourcesForm(request.form)
+    selected = form.follow_sources.data
+    user = current_user
+    for source in selected:
+        name, url = source, 'http://reddit.com'+source
+        feed = get_or_create(db.session, Feed, name=name, url=url)
+        if feed not in user.feeds:
+            user.feeds.append(feed)
+        
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('user.dashboard'))
+
+
 @user_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm(request.form)
@@ -62,25 +97,9 @@ def login():
             return render_template('user/login.html', form=form)
     return render_template('user/login.html', title='Please Login', form=form)
 
-@user_blueprint.route('/dashboard')
-@login_required
-def dashboard():
-    feed_data = {}
-    sub_query = ''
-    by_domain = {}
-    for feed in current_user.feeds:
-        sub_query += feed.name.strip('/r/') + '+'
-
-    if sub_query:
-        submissions = hot_posts(sub_query)
-        by_domain = split_by_domain(submissions)
-
-    return render_template('user/dashboard.html', user=current_user, by_domain=by_domain)
-
-    # else:
-    #     return render_template('user/dashboard.html', user=current_user)
 
 
+   
 @user_blueprint.route('/logout')
 @login_required
 def logout():
