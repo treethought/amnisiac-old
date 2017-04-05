@@ -1,7 +1,21 @@
 {% extends "_base.html" %} {% block content %}
 
+<div class="container">
+    <div class="row">
 
-<h1> {{ user.email }} Dashboard</h1> {% if not user.feeds %}
+        <div class="col-lg-5">
+            <h1> {{ user.email }} Dashboard</h1> 
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+              <h4><a href="{{ url_for('main.sources') }}">Manage Feeds</a></h4>
+        </div>
+    </div>
+</div>
+
+
+{% if not user.feeds %}
 
 <div>
     <h3>
@@ -12,49 +26,59 @@
 
 {% endif %}
 
+
+
+
+
+
 <div class="container">
-    Showing items from:
-    <br><br>
+    <h3>Showing items from:</h3><br><br>
+    <div class="col-lg-4">
     <ul>
         {% for feed in user.feeds %}
-
-        <li><a href="{{feed.url}}">{{feed.name}}</a></li>
+        <div class="row">
+            <li><a href="{{feed.url}}">{{feed.name}}</a></li>
+        </div>
 
         {% endfor %}
     </ul>
-
+          
+    </div>
 </div>
 
-{# <iframe width="720" height="405" src="https://www.youtube.com/embed/VIDEO_ID?playlist=VIDEOID_1,VIDEOID_2" frameborder="0" allowfullscreen>
- #}
-{# <iframe allowtransparency="true" scrolling="no" frameborder="no" src="https://w.soundcloud.com/icon/?url=http%3A%2F%2Fsoundcloud.com%2Ftreethought&color=orange_white&size=32" style="width: 32px; height: 32px;"></iframe> #}
-
-
-
 <div class="container-fluid feed-list col-sm-7">
-    {% for post in by_domain['youtube'] %}
+
+    <table class="table table-responsive table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th></th>
+                <th>Subreddit</th>
+                <th>Title</th>
+                {#
+                <th>Username</th> #}
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in by_domain['youtube'] %}
+            <tr class='table-row-{{post.video_id}}'>
+
+                <th scope="row">
+                <td class="col-sm-2 post-item" id="{{post.video_id}}"></td>
+
+                </th>
+                <td>{{post.subreddit}}</td>
+                <td class="col-sm-5 post-title" id="{{post.video_id}}-title">
+                    <a href="{{post.url}}">{{post.title}}</a></td>
+
+            </tr>
+
+            {% endfor %}
+        </tbody>
+    </table>
 
 
-    <div class="row" id="{{post.video_id}}">
 
-    <div>
-
-        <div class="col-sm-2 post-item" id="{{post.video_id}}">
-            {# <img class='post-icon' src="" id="{{post.video_id}}-icon"> #}
-        </div>
-
-        <div class="col-sm-5 post-title" id="{{post.video_id}}-title">
-            <a href="{{post.url}}">{{post.title}}</a>
-        </div>
-
-        {#
-        <div class="col-sm">
-            <img src="http://img.youtube.com/vi/{{post.video_id}}/0.jpg" height='80px' width='80px'>
-
-        </div> #}
-    </div>
-    </div>
-    {% endfor %}
 </div>
 
 <div class="now-playing-display container col-sm-4">
