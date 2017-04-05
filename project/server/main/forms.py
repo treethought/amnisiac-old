@@ -1,7 +1,7 @@
 # project/server/main/forms
 
 from flask_wtf import Form
-from wtforms import TextField, TextAreaField, SelectMultipleField, BooleanField, widgets
+from wtforms import TextField, TextAreaField, SelectMultipleField, widgets
 from wtforms.validators import DataRequired
 from project.server.scrapers.reddit_links import wiki_subs
 
@@ -10,7 +10,7 @@ from project.server.scrapers.reddit_links import wiki_subs
 class PostForm(Form):
     """Add new subreddit"""
 
-    subreddit = TextField('Subreddit', [DataRequired()])
+    subreddit = TextField('Subreddit', [DataRequired()], id='search-field')
     # text = TextAreaField('Body')
 
 
@@ -68,7 +68,9 @@ class MultiCheckboxField(SelectMultipleField):
 class SourcesForm(Form):
     """docstring for SourcesForm"""
 
-    follow_sources = MultiCheckboxField('Subs')
+    follow_sources = MultiCheckboxField('Subs', id='select-field')
+
+    search_bar = TextField('Search', id='search-bar')
 
     # def __init__(self, sources):
     #     super(SourcesForm, self).__init__()
