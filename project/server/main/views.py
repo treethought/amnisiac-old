@@ -11,7 +11,7 @@ from flask_login import login_required, current_user
 from project.server.main.forms import PostForm, SourcesForm
 from project.server.scrapers.reddit_links import hot_posts, wiki_subs, split_by_domain
 from project.server.models import User, Feed, get_or_create
-from project.server import db
+from project.server import db, app
 
 
 ################
@@ -45,14 +45,23 @@ def home():
     form = PostForm(request.form)
     return render_template('main/home.html', form=form)
 
+# @main_blueprint.route('/autocomplete', methods=['GET'])
+# def autocomplete():
+#     print(request)
+#     search = request.args.get('term')
+#     app.logger.debug(search)
+#     return jsonify(['test', '1', '2'])
+
+
+
 @main_blueprint.route('/results', methods=['POST'])
 def results():
     form = PostForm(request.form)
     if form.validate_on_submit():
-        subreddit = form.subreddit.data
-        submissions = hot_posts(subreddit)
+        subreddits = form.subreddit.data.replace(' ', '+').replace(',', '')
+        submissions = hot_posts(subreddits)
         by_domain = split_by_domain(submissions)
-        return render_template('main/results.html', subreddit=subreddit, by_domain=by_domain)
+        return render_template('main/results.html', subreddit=subreddits, by_domain=by_domain)
 
 @main_blueprint.route('/sources', methods=['GET', 'POST'])
 def sources():
@@ -61,23 +70,6 @@ def sources():
     form.follow_sources.choices = subs
     form.process()
     return render_template('main/sources.html', form=form)
-
-@main_blueprint.route('/add_sources', methods=['POST'])
-@login_required
-def add_sources():
-    form = SourcesForm(request.form)
-    selected = form.follow_sources.data
-    user = current_user
-    for source in selected:
-        name, url = source, 'http://reddit.com'+source
-        feed = get_or_create(db.session, Feed, name=name, url=url)
-        if feed not in user.feeds:
-            user.feeds.append(feed)
-        
-    db.session.add(user)
-    db.session.commit()
-    return redirect(url_for('user.dashboard'))
-
 
 
 @main_blueprint.route("/about/")
