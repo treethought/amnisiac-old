@@ -1,55 +1,66 @@
-{% extends "_base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% block content %}
-  <div>
+{% extends "_base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block content %}
+<div>
     <h3>
         Music Subreddits
     </h3>
-  </div>
+</div>
 
 
 <form class='form' role='form' method="post" action="{{ url_for('user.add_sources')}}">
 
-    {{ form.csrf_token }}
-    {{ form.hidden_tag() }}
-    {{ wtf.form_errors(form, hiddens='only') }}
-
-{#     <div class='row'>
-    <div class="col-lg-6 col-sm-6"> #}
-      {# {{ form.content }} #}
-      {# {{ form.follow_sources(cols="3")|safe}} #}
-      {# {{ form.follow_sources(class='table table-inverse', thead_class='thead-default') }} #}
-
+    {{ form.csrf_token }} {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens='only') }} 
     {{ wtf.form_field(form.search_bar)}}
 
 
-      
-      
-      <table class="table table-invert">
-        <thead class='thead-default'>
-          <tr>
-            <th>{{form.follow_sources.label}}</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for subfield in form.follow_sources %}
-          <tr>
-            <td>{{subfield}}{{subfield.data}}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
 
-    <br><br>
-    </div>
+
+            <table class="table table-invert" id='source-table'>
+                <thead class='thead-default'>
+                    <tr>
+                        <th>{{form.follow_sources.label}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subfield in form.follow_sources %}
+                    <tr>
+                        <td>{{subfield}}{{subfield.data}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <br><br>
+        </div>
     </div>
     <br><br>
     <div class='row'>
-    <button type="submit" class="btn btn-success">Follow</button>  
+        <button type="submit" class="btn btn-success">Follow</button>
     </div>
 </form>
 <br><br>
 
-      
 
-{% endblock content %}  
+<script type="text/javascript">
+    var sources = []
+    $("#source-table tr td").each(function() {
+        sources.push($(this).text());
+    });
+    console.log(sources)
+
+    $('#source-table').hide();
+
+    $('#search-bar').attr({
+        multiple: 'multiple'
+    });
+
+    $('#search-bar').select2({
+        data: sources
+    });
+</script>
+
+
+
+
+
+{% endblock content %}
