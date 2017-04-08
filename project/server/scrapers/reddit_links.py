@@ -41,8 +41,8 @@ def wiki_subs(sub, wiki_name):
     for sub in subs:
         if '/r/' in sub.text[:3]:
             name = sub.text.strip('/r/').split()[0]
-            sub_names.append(name)
-    return sub_names
+            yield name
+
 
 
 def split_by_domain(submissions):

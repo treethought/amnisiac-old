@@ -10,9 +10,10 @@ from flask import render_template, Blueprint, url_for, \
 from flask_login import login_user, logout_user, login_required, current_user
 
 from project.server import bcrypt, db
-from project.server.models import User
+from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
 from project.server.scrapers.reddit_links import hot_posts, split_by_domain
+from project.server.main.forms import SourcesForm
 
 ################
 #### config ####
@@ -50,7 +51,7 @@ def dashboard():
 @login_required
 def add_sources():
     form = SourcesForm(request.form)
-    selected = form.follow_sources.data
+    selected = form.search_bar.data.split(',')
     user = current_user
     for source in selected:
         name, url = source, 'http://reddit.com'+source
