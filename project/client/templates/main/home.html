@@ -1,45 +1,73 @@
-{% extends "_base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
-{% block content %}
+{% extends "_base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block content %}
 
 <div class="body-content">
-  <div class="row">
-    <h1>Welcome!</h1>
+    <div class="row">
+        <h1>Welcome!</h1>
 
-    <div>
-        <h3>
+        <div>
+            <h3>
             To get started enter the name of a subreddit you'd like to see
         </h3>
+        </div>
+
+        <form class="form" role="form" method="post" action="{{ url_for('main.results') }}">
+
+            {{ form.csrf_token }} {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
+
+            <div class="col-lg-4 col-sm-4">
+
+                {{ wtf.form_field(form.subreddit) }}
+
+                <button class="btn btn-success" type="submit">Listen</button>
+                <br><br>
+            </div>
+
+        </form>
     </div>
 
-{# {% if current_user.is_authenticated %} #}
-<form class="form" role="form" method="post" action="{{ url_for('main.results') }}">
-
-    {{ form.csrf_token }}
-    {{ form.hidden_tag() }}
-    {{ wtf.form_errors(form, hiddens="only") }}
-
+    <br><br>
     <div class="col-lg-4 col-sm-4">
-
-      {{ wtf.form_field(form.subreddit) }}
-
-      <button class="btn btn-success" type="submit">Test</button>
-      <br><br>
-    </div>
-
-</form>
-</div>
-
-<br><br>
-<div class="col-lg-4 col-sm-4">
-  <h4>
+        <h4>
     Or select subreddits from the <a href="{{ url_for('main.sources') }}">list</a>
   </h4>
+    </div>
+
 </div>
 
-    
-    
-</div>
-  
+
+<script type="text/javascript">
+    $(function() {
+        function split(val) {
+            return val.split(/,\s*/);
+        }
+
+        function extractLast(term) {
+            return split(term).pop();
+        }
+
+        $("#search-field").autocomplete({
+            source: function(request, response) {
+                $.getJSON("{{url_for('main.autocomplete')}}", {
+                    q: extractLast(request.term), // in flask, "q" will be the argument to look for using request.args
+                }, function(data) {
+                    var source_data = data.matching_results
+                    response(data.matching_results); // matching_results from jsonify
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                console.log(ui.item.value); // not in your question, but might help later
+                var terms = split(this.value);
+                terms.pop();
+                terms.push(ui.item.value);
+                terms.push("");
+                this.value = terms.join(", ");
+                return false;
+            }
+        })
+    })
+</script>
+
+
 
 {% endblock %}
