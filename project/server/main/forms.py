@@ -7,10 +7,10 @@ from project.server.scrapers.reddit_links import wiki_subs
 
 
 
-class PostForm(Form):
+class SearchForm(Form):
     """Add new subreddit"""
 
-    subreddit = TextField('Subreddit', [DataRequired()], id='search-field')
+    subreddit = TextField('Subreddit', [DataRequired()], id='search-field', render_kw={'placeholder': 'Enter some subreddits'})
     # text = TextAreaField('Body')
 
 
