@@ -5,40 +5,54 @@
     </h3>
 </div>
 
+<div class="container">
 
-<form class='form' role='form' method="post" action="{{ url_for('user.add_sources')}}">
+    <div class="row">
 
-    {{ form.csrf_token }} {{ form.hidden_tag() }}
-    {{ wtf.form_errors(form, hiddens='only') }} 
-    {{ wtf.form_field(form.search_bar)}}
+        <div class="col-lg-5">
+            <form class='form' role='form' method="post" action="{{ url_for('user.add_sources')}}">
+
+                {{ form.csrf_token }} {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens='only') }} {{ wtf.form_field(form.search_bar)}}
+
+                <table class="table table-invert" id='source-table'>
+                    <thead class='thead-default'>
+                        <tr>
+                            <div class="col-lg-5">
+                                <div id='nav'></div>
+                            </div>
+                        </tr>
+                        <tr>
+                            <th>{{form.follow_sources.label}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subfield in form.follow_sources %}
+                        <tr>
+                            <td>{{subfield}}{{subfield.data}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="col-lg-2">
+                    <button type="submit" class="btn btn-success">Follow</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
 
 
+    <div class="row">
 
-
-            <table class="table table-invert" id='source-table'>
-                <thead class='thead-default'>
-                    <tr>
-                        <th>{{form.follow_sources.label}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for subfield in form.follow_sources %}
-                    <tr>
-                        <td>{{subfield}}{{subfield.data}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-            <br><br>
+        <div class="col-lg-2">
+            <button type="toggle" class="btn btn-primary" id="toggle-sources">Browse Sources</button>
         </div>
     </div>
-    <br><br>
-    <div class='row'>
-        <button type="submit" class="btn btn-success">Follow</button>
-    </div>
-</form>
-<br><br>
+
+</div>
+
+
+
 
 
 <script type="text/javascript">
@@ -49,6 +63,7 @@
     console.log(sources)
 
     $('#source-table').hide();
+    $('#nav').hide();
 
     $('#search-bar').attr({
         multiple: 'multiple'
@@ -57,10 +72,40 @@
     $('#search-bar').select2({
         data: sources
     });
+
+    $("#toggle-sources").click(function() {
+        // alert('clicked it');
+        console.log('clicked it')
+        $('#nav').show();
+        $('#source-table').show();
+    });
 </script>
 
+{#
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#source-table').after('<div id="nav"></div>');
+        var rowsShown = 20;
+        var rowsTotal = $('#source-table tbody tr').length;
+        var numPages = rowsTotal / rowsShown;
+        for (i = 0; i < numPages; i++) {
+            var pageNum = i + 1;
+            $('#nav').append('<a href="#" rel="' + i + '">' + pageNum + '</a> ');
+        }
+        $('#source-table tbody tr').hide();
+        $('#source-table tbody tr').slice(0, rowsShown).show();
+        $('#nav a:first').addClass('active');
+        $('#nav a').bind('click', function() {
 
-
-
-
-{% endblock content %}
+            $('#nav a').removeClass('active');
+            $(this).addClass('active');
+            var currPage = $(this).attr('rel');
+            var startItem = currPage * rowsShown;
+            var endItem = startItem + rowsShown;
+            $('#source-table tbody tr').css('opacity', '0.0').hide().slice(startItem, endItem).
+            css('display', 'table-row').animate({
+                opacity: 1
+            }, 300);
+        });
+    });
+</script> #} {% endblock content %}
