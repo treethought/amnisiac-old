@@ -4,12 +4,13 @@
     <div class="row">
 
         <div class="col-lg-5">
-            <h1> {{ user.email }} Dashboard</h1> 
+            <h1>Dashboard</h1>
+            <h3>{{user.email}}</h3>
         </div>
     </div>
     <div class="row">
         <div class="col-lg-3">
-              <h4><a href="{{ url_for('main.sources') }}">Manage Feeds</a></h4>
+              <h4><a href="{{ url_for('user.manage_sources') }}">Manage Feeds</a></h4>
         </div>
     </div>
 </div>
@@ -48,7 +49,7 @@
 
 <div class="container-fluid feed-list col-sm-7">
 
-    <table class="table table-responsive table-striped">
+    <table class="table table-responsive table-striped" id="feed-table">
         <thead>
             <tr>
                 <th></th>
@@ -86,15 +87,6 @@
     <div class="youtube-player" data-video="" data-autoplay="0" data-loop="1" id="youtube-player">
     </div>
 </div>
-
-
-
-
-
-
-
-
-
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
