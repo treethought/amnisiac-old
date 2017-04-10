@@ -29,11 +29,10 @@ user_blueprint = Blueprint('user', __name__,)
 @user_blueprint.route('/dashboard')
 @login_required
 def dashboard():
-    feed_data = {}
     sub_query = ''
     by_domain = {}
     for feed in current_user.feeds:
-        sub_query += feed.name.strip('/r/') + '+'
+        sub_query += feed.name.strip().strip('/r/') + '+'
 
     if sub_query:
         submissions = hot_posts(sub_query)
