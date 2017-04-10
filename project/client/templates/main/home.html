@@ -1,38 +1,30 @@
 {% extends "_base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block content %}
 
-<div class="body-content">
-    <div class="row">
-        <h1>Welcome!</h1>
 
-        <div>
-            <h3>
-            To get started enter the name of a subreddit you'd like to see
-        </h3>
+<div class="container">
+    <div class="row">
+
+        <div class="col-lg-5 col-xs-5">
+            <h1>Welcome!</h1>
         </div>
 
-        <form class="form" role="form" method="post" action="{{ url_for('main.results') }}">
-
-            {{ form.csrf_token }} {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens="only") }}
-
-            <div class="col-lg-4 col-sm-4">
-
-                {{ wtf.form_field(form.subreddit) }}
-
-                <button class="btn btn-success" type="submit">Listen</button>
-                <br><br>
-            </div>
-
-        </form>
     </div>
 
-    <br><br>
-    <div class="col-lg-4 col-sm-4">
-        <h4>
-    Or select subreddits from the <a href="{{ url_for('main.sources') }}">list</a>
-  </h4>
+    <div class="row">
+        <div class="col-lg col-xs">
+            <h3>To get started enter the name of a subreddit you'd like to see</h3>
+        </div>
     </div>
 
 </div>
+
+<div class="container">
+    {% set action=url_for('main.results') %}
+    {% set btn_label='Listen' %}
+    {% include 'main/sub_search.html' %}
+</div>
+
+
 
 
 <script type="text/javascript">

@@ -1,0 +1,118 @@
+{% import "bootstrap/wtf.html" as wtf %} {# {% block sub_search %} #}
+
+
+    <form class='form' role='form' method="post" action="{{action}}">
+
+        <div class="row">
+
+            <div class="col">
+                {{ form.csrf_token }} {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens='only') }} {{ wtf.form_field(form.search_bar)}}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2">
+                <button type="button" class="btn btn-secondary" id='toggle-sources'>Show list</button>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col">
+
+                <table class="table table-invert" id='source-table'>
+                    <thead class='thead-default'>
+                        <tr>
+                            <div class="col-lg-5">
+                                <div id='nav'></div>
+                            </div>
+                        </tr>
+                        <tr>
+                            <th>{{form.follow_sources.label}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for subfield in form.follow_sources %}
+                        <tr>
+                            <td>{{subfield}}{{subfield.data}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-2">
+                <button type="submit" class="btn btn-success">{{btn_label}}</button>
+            </div>
+
+        </div>
+
+
+
+
+
+    </form>
+
+
+<script type="text/javascript">
+    var sources = []
+    $("#source-table tr td").each(function() {
+        sources.push($(this).text());
+    });
+    console.log(sources)
+
+    $('#source-table').hide();
+    $('#nav').hide();
+
+
+    $('#search-bar').select2({
+        multiple: true,
+        placeholder: '/r/',
+        data: sources,
+        tags: true,
+
+    });
+
+    $("#toggle-sources").click(function() {
+        $('#nav').show();
+        $('#source-table').toggle();
+
+
+});
+
+
+
+
+</script>
+
+{#
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#source-table').after('<div id="nav"></div>');
+        var rowsShown = 20;
+        var rowsTotal = $('#source-table tbody tr').length;
+        var numPages = rowsTotal / rowsShown;
+        for (i = 0; i < numPages; i++) {
+            var pageNum = i + 1;
+            $('#nav').append('<a href="#" rel="' + i + '">' + pageNum + '</a> ');
+        }
+        $('#source-table tbody tr').hide();
+        $('#source-table tbody tr').slice(0, rowsShown).show();
+        $('#nav a:first').addClass('active');
+        $('#nav a').bind('click', function() {
+
+            $('#nav a').removeClass('active');
+            $(this).addClass('active');
+            var currPage = $(this).attr('rel');
+            var startItem = currPage * rowsShown;
+            var endItem = startItem + rowsShown;
+            $('#source-table tbody tr').css('opacity', '0.0').hide().slice(startItem, endItem).
+            css('display', 'table-row').animate({
+                opacity: 1
+            }, 300);
+        });
+    });
+</script> #}
