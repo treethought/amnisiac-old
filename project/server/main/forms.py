@@ -8,7 +8,7 @@ from project.server.scrapers.reddit_links import wiki_subs
 
 
 class SearchForm(Form):
-    """Add new subreddit"""
+    """Home Search bar - uses autocomplete and view func"""
 
     subreddit = TextField('Subreddit', [DataRequired()], id='search-field', render_kw={'placeholder': 'Enter some subreddits'})
     # text = TextAreaField('Body')
@@ -66,26 +66,11 @@ class MultiCheckboxField(SelectMultipleField):
 
 
 class SourcesForm(Form):
-    """docstring for SourcesForm"""
+    """Used in sources.html - autocompletes using select2 and he multicheckbox"""
 
     follow_sources = MultiCheckboxField('Subs', id='select-field')
 
     search_bar = TextField('Search', id='search-bar')
 
-    # def __init__(self, sources):
-    #     super(SourcesForm, self).__init__()
-    #     print('assigning sources ({}) to choices'.format(type(sources)))
-    #     self.follow_sources.choices = sources
-
-    # subs = build_sources()
-    # wiki_subs('music', 'musicsubreddits')
-
-    # follow_subs = SelectField('subs', choices=subs)
-
-
-
-# class SourcesForm(Form):
-#     Select Subreddits to follow
-#     follow_subs = SelectField('subreddits')
 
     
