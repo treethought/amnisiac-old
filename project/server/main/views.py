@@ -22,24 +22,15 @@ from flask_sqlalchemy import BaseQuery, Pagination
 main_blueprint = Blueprint('main', __name__,)
 
 
-@main_blueprint.route('/sourcelist')
-def sourcelist():
-    print('BUILDING SOURCE FOR FORM')
-    results = {'results': [], 'more': False}
-    for sub in wiki_subs('music', 'musicsubreddits'):
-        results['results'].append({'id': sub, 'text': sub})
-
-    return jsonify(matching_results=results)
-
-
 ################
 #### routes ####
 ################
 
 @main_blueprint.route('/', methods=['GET', 'POST'])
 def home():
-    form = SearchForm(request.form)
-    sources = build_sources()
+    form = SourcesForm(request.form)
+    form.follow_sources.choices = build_sources()
+    form.process()
     return render_template('main/home.html', form=form, sources=sources)
 
 
@@ -60,10 +51,14 @@ def autocomplete():
 
 @main_blueprint.route('/results', methods=['POST'])
 def results():
-    form = SearchForm(request.form)
+    form = SourcesForm(request.form)
+    sub_query = ''
     if form.validate_on_submit():
-        subreddits = form.subreddit.data.replace(' ', '+').replace(',', '')
-        submissions = hot_posts(subreddits)
+        subreddits = form.search_bar.data.split(',')
+        for sub in subreddits:
+            sub_query += sub.strip(',').strip('/r/') + '+'
+
+        submissions = hot_posts(sub_query)
         by_domain = split_by_domain(submissions)
         return render_template('main/results.html', subreddit=subreddits, by_domain=by_domain)
 

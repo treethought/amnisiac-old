@@ -70,7 +70,7 @@ class SourcesForm(Form):
 
     follow_sources = MultiCheckboxField('Subs', id='select-field')
 
-    search_bar = TextField('Search', id='search-bar')
+    search_bar = TextField('Search Subreddits', id='search-bar')
 
 
     
