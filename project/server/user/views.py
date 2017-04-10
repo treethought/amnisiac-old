@@ -61,7 +61,7 @@ def manage_sources():
 @login_required
 def add_sources():
     form = SourcesForm(request.form)
-    selected = form.search_bar.data.split(',')
+    selected = form.search_bar.data.strip(',').split(',')
     user = current_user
     for source in selected:
         name, url = source, 'http://reddit.com' + source
@@ -71,7 +71,7 @@ def add_sources():
 
     db.session.add(user)
     db.session.commit()
-    return redirect(url_for('user.dashboard'))
+    return redirect(url_for('user.manage_sources'))
 
 
 @user_blueprint.route('/remove_sources', methods=['POST'])
