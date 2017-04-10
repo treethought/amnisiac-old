@@ -9,9 +9,10 @@ from flask import render_template, Blueprint, request, redirect, make_response, 
 from flask_login import login_required, current_user
 
 from project.server.main.forms import SearchForm, SourcesForm
-from project.server.scrapers.reddit_links import hot_posts, wiki_subs, split_by_domain
+from project.server.scrapers.reddit_links import hot_posts, wiki_subs, split_by_domain, build_sources
 from project.server.models import User, Feed, get_or_create
 from project.server import db, app
+from flask_sqlalchemy import BaseQuery, Pagination
 
 
 ################
@@ -19,22 +20,6 @@ from project.server import db, app
 ################
 
 main_blueprint = Blueprint('main', __name__,)
-
-# @app.context_processor
-# def utility_processor():
-#     def format_price(amount, currency=u'€'):
-#         return u'{0:.2f}{1}'.format(amount, currency)
-#     return dict(format_price=format_price)
-
-
-def build_sources():
-    subs = wiki_subs('music', 'musicsubreddits')
-    sub_names = []
-    for s in subs:
-        name = '/r/{}'.format(s)
-        choice = (name, name)
-        sub_names.append(choice)  # choices must be tuples
-    return sub_names
 
 
 @main_blueprint.route('/sourcelist')

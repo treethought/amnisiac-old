@@ -12,7 +12,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from project.server import bcrypt, db
 from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
-from project.server.scrapers.reddit_links import hot_posts, split_by_domain
+from project.server.scrapers.reddit_links import hot_posts, split_by_domain, build_sources
 from project.server.main.forms import SourcesForm
 
 ################
@@ -20,9 +20,6 @@ from project.server.main.forms import SourcesForm
 ################
 
 user_blueprint = Blueprint('user', __name__,)
-
-
-
 
 
 ################
@@ -41,10 +38,24 @@ def dashboard():
     if sub_query:
         submissions = hot_posts(sub_query)
         by_domain = split_by_domain(submissions)
-        
 
     return render_template('user/dashboard.html', user=current_user, by_domain=by_domain)
 
+
+@user_blueprint.route('/manage_sources', methods=['GET', 'POST'])
+@login_required
+def manage_sources():
+    new_sources = build_sources()
+    new = SourcesForm(request.form)
+    new.follow_sources.choices = new_sources
+    new.process()
+
+    current = SourcesForm(request.form)
+    current_choice_tups = [(f.name, f.name) for f in current_user.feeds]
+    current.follow_sources.choices = current_choice_tups
+    current.process()
+
+    return render_template('user/manage_sources.html', new=new, current=current)
 
 
 @user_blueprint.route('/add_sources', methods=['POST'])
@@ -54,14 +65,37 @@ def add_sources():
     selected = form.search_bar.data.split(',')
     user = current_user
     for source in selected:
-        name, url = source, 'http://reddit.com'+source
+        name, url = source, 'http://reddit.com' + source
         feed = get_or_create(db.session, Feed, name=name, url=url)
         if feed not in user.feeds:
             user.feeds.append(feed)
-        
+
     db.session.add(user)
     db.session.commit()
     return redirect(url_for('user.dashboard'))
+
+
+@user_blueprint.route('/remove_sources', methods=['POST'])
+@login_required
+def remove_sources():
+    form = SourcesForm(request.form)
+    selected = form.follow_sources.data
+    user = current_user
+    current_feeds = user.feeds
+    for s in selected:
+        feed = get_or_create(db.session, Feed, name=s)
+        try:
+            current_feeds.remove(feed)
+        except ValueError:
+            raise  # or scream: thing not in some_list!
+        except AttributeError:
+            raise  # call security, some_list not quacking like a list!
+
+    user.feeds = current_feeds
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('user.manage_sources'))
+
 
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
@@ -99,8 +133,6 @@ def login():
     return render_template('user/login.html', title='Please Login', form=form)
 
 
-
-   
 @user_blueprint.route('/logout')
 @login_required
 def logout():

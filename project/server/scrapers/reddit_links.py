@@ -13,7 +13,16 @@ reddit = praw.Reddit(client_id=os.getenv('CLIENT_ID'),
                      user_agent='testscript by /u/squeeney',
                      username='squeeney')
 
+def build_sources():
+    subs = wiki_subs('music', 'musicsubreddits')
+    sub_names = []
+    for s in subs:
+        name = '/r/{}'.format(s)
+        choice = (name, name)
+        sub_names.append(choice)  # choices must be tuples
+    return sub_names
 
+    
 def hot_posts(sub):
     result = []
     print('fetchin {} subreddit'.format(sub))
