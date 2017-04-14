@@ -89,8 +89,6 @@ function onYouTubeIframeAPIReady() {
         })
 
 
-        // body...
-
         function renderPlayer(postVideoID) {
 
             console.log('rendering for ' + postVideoID);

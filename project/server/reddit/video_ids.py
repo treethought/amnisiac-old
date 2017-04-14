@@ -1,6 +1,7 @@
-# initial version: http://stackoverflow.com/a/7936523/617185 \
-#    by Mikhail Kashkin(http://stackoverflow.com/users/85739/mikhail-kashkin)
+# initial version: http://stackoverflow.com/a/7936523/617185
+# by Mikhail Kashkin(http://stackoverflow.com/users/85739/mikhail-kashkin)
 from urllib.parse import urlparse, parse_qs
+
 
 def get_video_id(domain, url):
     if 'vimeo' in domain:
@@ -11,15 +12,13 @@ def get_video_id(domain, url):
         return ''
 
 
-
 def vimeo_id(url):
     return urlparse(url).path.lstrip("/")
 
 
-
 def youtube_id(url):
     """Returns Video_ID extracting from the given url of Youtube
-    
+
     Examples of URLs:
       Valid:
         'http://youtu.be/_lOT2p_FCvA',
@@ -28,12 +27,10 @@ def youtube_id(url):
         'http://www.youtube.com/v/_lOT2p_FCvA?version=3&amp;hl=en_US',
         'https://www.youtube.com/watch?v=rTHlyTphWP0&index=6&list=PLjeDyYvG6-40qawYNR4juzvSOg-ezZ2a6',
         'youtube.com/watch?v=_lOT2p_FCvA',
-      
+
       Invalid:
         'youtu.be/watch?v=_lOT2p_FCvA',
     """
-   
-
 
     if url.startswith(('youtu', 'www')):
         url = 'http://' + url
@@ -47,4 +44,3 @@ def youtube_id(url):
             return query.path.split('/')[2]
     elif 'youtu.be' in query.hostname:
         return query.path[1:]
-
