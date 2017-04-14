@@ -2,13 +2,15 @@
 
 import os
 from markdown import markdown
-from typing import List, Iterable
-
 import praw
 from bs4 import BeautifulSoup as bs
 
 
 from project.server.reddit.video_ids import get_video_id
+
+# Type Annotations #
+from typing import List, Iterable
+from praw.models import Submission
 
 # script
 reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),
@@ -17,14 +19,15 @@ reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),
                      user_agent='testscript',
                      username=os.getenv('REDDIT_USERNAME'))
 
-def fetch_submissions(subreddits: list) -> list:
+
+def fetch_submissions(subreddits: List[str]) -> List[Submission]:
     sub_query = ''
     for sub in subreddits:
         sub_query += sub.strip(',').strip('/r/') + '+'
     return hot_posts(sub_query)
 
 
-def build_sources():
+def build_sources() -> List[tuple]:
     subs = wiki_subs('music', 'musicsubreddits')
     sub_names = []
     for s in subs:
@@ -34,7 +37,7 @@ def build_sources():
     return sub_names
 
 
-def hot_posts(sub: str) -> list: 
+def hot_posts(sub: str) -> List[Submission]:
     result = []
     print('fetchin {} subreddit'.format(sub))
     try:
@@ -53,7 +56,7 @@ def get_audio(post_url):
         pass
 
 
-def wiki_subs(sub: str, wiki_name: str) -> Iterable:
+def wiki_subs(sub: str, wiki_name: str) -> Iterable[str]:
     wiki = reddit.subreddit(sub).wiki[wiki_name]
     html = markdown(wiki.content_md)
     subs = bs(html, 'html.parser').select('li')
