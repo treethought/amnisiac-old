@@ -13,7 +13,7 @@ from project.server import bcrypt, db
 from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
 from project.server.reddit.api import hot_posts, split_by_domain, build_sources
-from project.server.main.forms import SourcesForm
+from project.server.reddit.forms import SourcesForm
 
 ################
 #### config ####
