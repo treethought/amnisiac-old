@@ -8,5 +8,5 @@ from wtforms.validators import DataRequired
 class ScSearchForm(Form):
     """Home Search bar - uses autocomplete and view func"""
 
-    search_bar = TextField('Search Soundcloud', [DataRequired()],
+    sc_search = TextField('Search Soundcloud', [DataRequired()],
                              id='search-field', render_kw={'placeholder': 'Search for an artist'})

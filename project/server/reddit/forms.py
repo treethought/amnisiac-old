@@ -17,4 +17,4 @@ class RedditSearchForm(Form):
 
     follow_sources = MultiCheckboxField('Subs', id='select-field', validators=[Optional()])
 
-    search_bar = TextField('Search Subreddits', id='search-bar')
+    reddit_search = TextField('Search Subreddits', id='search-bar')

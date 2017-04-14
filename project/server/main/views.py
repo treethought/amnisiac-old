@@ -5,13 +5,13 @@
 #### imports ####
 #################
 
-from flask import render_template, Blueprint, request
+from flask import render_template, Blueprint, request, session
 
 from project.server.reddit.forms import RedditSearchForm
 from project.server.sc.forms import ScSearchForm
 from project.server.reddit.api import build_sources, fetch_submissions
 
-from typing import List
+from typing import List, Dict
 
 ################
 #### config ####
@@ -34,6 +34,11 @@ def home():
     return render_template('main/home.html', reddit_form=reddit_form, sc_form=sc_form)
 
 
+# def gather_items(reddit_query: List[str], sc_query=List[str]) -> Dict[] :
+#     items = {}
+#     reddit_posts = fetch_submissions(session['reddit_query'])
+
+
 
 @main_blueprint.route('/results', methods=['POST'])
 def results():
@@ -41,17 +46,23 @@ def results():
     submissions = []
 
     sc_form = ScSearchForm(request.form)
+    call_sc = False
 
-    if reddit_form.search_bar.data and reddit_form.validate_on_submit():
-        print('submitted bitch')
-        subreddits = reddit_form.search_bar.data.split(',')
+    # TODO!! render feed for reddit/sc the same way
+    # riht now: 
+        # reddit: loads ons server, sends list of objectsto template
+        # sc: stores query in session, page loads send ajax to sc view to retrieve results (bc slower)
+
+    if reddit_form.reddit_search.data and reddit_form.validate_on_submit():
+        subreddits = reddit_form.reddit_search.data.split(',')
         submissions = fetch_submissions(subreddits)
 
-    if sc_form.search_bar.data and sc_form.validate_on_submit():
-        pass
+    if sc_form.sc_search.data and sc_form.validate_on_submit():
+        session['sc_artists'] = sc_form.sc_search.data
+        call_sc = True
 
         
-    return render_template('main/results.html', submissions=submissions)
+    return render_template('main/results.html', submissions=submissions, call_sc=call_sc)
 
 
 @main_blueprint.route('/sources', methods=['GET', 'POST'])

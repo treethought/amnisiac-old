@@ -1,6 +1,5 @@
 # project/server/user/views.py
 
-
 #################
 #### imports ####
 #################
@@ -38,7 +37,7 @@ def dashboard():
         submissions = hot_posts(sub_query)
         by_domain = split_by_domain(submissions)
 
-    return render_template('user/dashboard.html', user=current_user, by_domain=by_domain)
+    return render_template('user/dashboard.html', user=current_user, submissions=submissions)
 
 
 @user_blueprint.route('/manage_sources', methods=['GET', 'POST'])

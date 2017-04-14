@@ -6,7 +6,7 @@
         <div class="row">
 
             <div class="col">
-                {{ reddit_form.csrf_token }} {{ reddit_form.hidden_tag() }} {{ wtf.form_errors(reddit_form, hiddens='only') }} {{ wtf.form_field(reddit_form.search_bar)}}
+                {{ reddit_form.csrf_token }} {{ reddit_form.hidden_tag() }} {{ wtf.form_errors(reddit_form, hiddens='only') }} {{ wtf.form_field(reddit_form.reddit_search)}}
             </div>
         </div>
 
