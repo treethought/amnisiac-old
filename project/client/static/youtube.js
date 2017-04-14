@@ -1,6 +1,7 @@
 
 var player = null;
 
+
 function onYouTubeIframeAPIReady() {
 
     // player = function () {
@@ -43,14 +44,12 @@ function onYouTubeIframeAPIReady() {
 
         elem.addEventListener('click', function() {
             console.log('clicked ' + elem.id);
-            // console.log('State was '+ player.getPlayerState());
-
 
             if (!YT.get('youtube-player')) {
                 renderPlayer(elem.id);
-                // player = YT.get('youtube-player');
+                $('#now-playing-display').show('slow');
+                $('#toggle-player').show('slow');
                 console.log('CREATED FIRST PLAYER with:' + elem.id);
-                // console.log('PLAYER VAR:')
             }
 
             if (player.a.src.toString().includes(elem.id)) {
@@ -61,7 +60,6 @@ function onYouTubeIframeAPIReady() {
 
 
                     console.log('pausing video ' + elem.id)
-                        // console.log(player.)
                     player.pauseVideo();
                     toggleButon(false);
                 }

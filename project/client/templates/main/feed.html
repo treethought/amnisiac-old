@@ -1,6 +1,25 @@
-<div class="container-fluid feed-list col-sm-7">
+<div class="container" id="now-playing-display">
+    <div class="row">
 
-    <table class="table table-responsive table-striped" id="feed-table">
+        <div class="col-sm-4">
+            <h2>Now Playing...</h2>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg">
+            <div class="youtube-player" data-video="" data-autoplay="0" data-loop="1" id="youtube-player">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div><button type="button" class="btn btn-link" id='toggle-player' data-toggle="button" aria-pressed="false" autocomplete="off">Hide Player</button> </div>
+
+
+<div class="container feed-list col-sm-7">
+
+    <table class="table table-responsive table-striped col-sm-7" id="feed-table">
         <thead>
             <tr>
                 <th></th>
@@ -16,7 +35,7 @@
             <tr class='table-row-{{post.video_id}}'>
 
                 <th scope="row">
-                <td class="col-sm-2 post-item" id="{{post.video_id}}"></td>
+                    <td class="col-sm-2 post-item" id="{{post.video_id}}"></td>
 
                 </th>
                 <td>{{post.subreddit}}</td>
@@ -29,18 +48,29 @@
         </tbody>
     </table>
 
-
-
 </div>
 
-<div class="now-playing-display container col-sm-4">
-    <h2>Now Playing...</h2>
-    <div class="youtube-player" data-video="" data-autoplay="0" data-loop="1" id="youtube-player">
-    </div>
-</div>
+<script type="text/javascript">
+    jQuery(document).ready(function($) {
+        var btn = $('#toggle-player');
+        var display = $('#now-playing-display');
+        btn.hide();
+        display.hide();
+        btn.click(function() {
+            display.toggle();
+            if (display.is(':visible')) {
+                btn.text('hide video player')
+            } else {
+                btn.text('show video player')
+            }
+
+
+        });
+    });
+</script>
+
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="{{url_for('static', filename='youtube.js')}}"></script>
-
