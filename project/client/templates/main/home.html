@@ -22,12 +22,14 @@
     {% set action=url_for('main.results') %}
     {% set btn_label='Listen' %}
     {% include 'main/sub_search.html' %}
+    {% include 'main/sc_search.html' %}
 </div>
 
 
 
 
-<script type="text/javascript">
+
+{# <script type="text/javascript">
     $(function() {
         function split(val) {
             return val.split(/,\s*/);
@@ -58,7 +60,7 @@
             }
         })
     })
-</script>
+</script> #}
 
 
 
