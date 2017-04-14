@@ -1,8 +1,12 @@
-import praw
-import requests
-from bs4 import BeautifulSoup as bs
-from markdown import markdown
+# project/server/reddit/api.py
+
 import os
+from markdown import markdown
+from typing import List, Iterable
+
+import praw
+from bs4 import BeautifulSoup as bs
+
 
 from project.server.reddit.video_ids import get_video_id
 
@@ -12,6 +16,12 @@ reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),
                      # password='password', # not needed for read only
                      user_agent='testscript',
                      username=os.getenv('REDDIT_USERNAME'))
+
+def fetch_submissions(subreddits: list) -> list:
+    sub_query = ''
+    for sub in subreddits:
+        sub_query += sub.strip(',').strip('/r/') + '+'
+    return hot_posts(sub_query)
 
 
 def build_sources():
@@ -24,7 +34,7 @@ def build_sources():
     return sub_names
 
 
-def hot_posts(sub):
+def hot_posts(sub: str) -> list: 
     result = []
     print('fetchin {} subreddit'.format(sub))
     try:
@@ -43,7 +53,7 @@ def get_audio(post_url):
         pass
 
 
-def wiki_subs(sub, wiki_name):
+def wiki_subs(sub: str, wiki_name: str) -> Iterable:
     wiki = reddit.subreddit(sub).wiki[wiki_name]
     html = markdown(wiki.content_md)
     subs = bs(html, 'html.parser').select('li')
@@ -55,8 +65,8 @@ def wiki_subs(sub, wiki_name):
 
 def split_by_domain(submissions):
     domains = {'youtube': [], 'vimeo': []}
-    yt_posts = [p for p in submissions if 'you' in p.domain]
-    for p in [p for p in yt_posts if p.video_id]:
+    yt_posts = [p for p in submissions if 'you' in p.domain and p.video_id]
+    for p in yt_posts:
         if len(p.video_id) == 11:  # ensure id is valid 11-char
             domains['youtube'].append(p)
 

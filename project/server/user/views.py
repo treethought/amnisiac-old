@@ -13,7 +13,7 @@ from project.server import bcrypt, db
 from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
 from project.server.reddit.api import hot_posts, split_by_domain, build_sources
-from project.server.reddit.forms import SourcesForm
+from project.server.reddit.forms import RedditSearchForm
 
 ################
 #### config ####
@@ -34,7 +34,7 @@ def dashboard():
     for feed in current_user.feeds:
         sub_query += feed.name.strip().strip('/r/') + '+'
 
-    if sub_query:
+    if sub_query: #TODO
         submissions = hot_posts(sub_query)
         by_domain = split_by_domain(submissions)
 
@@ -45,11 +45,11 @@ def dashboard():
 @login_required
 def manage_sources():
     new_sources = build_sources()
-    new = SourcesForm(request.form)
+    new = RedditSearchForm(request.form)
     new.follow_sources.choices = new_sources
     new.process()
 
-    current = SourcesForm(request.form)
+    current = RedditSearchForm(request.form)
     current_choice_tups = [(f.name, f.name) for f in current_user.feeds]
     current.follow_sources.choices = current_choice_tups
     current.process()
@@ -60,7 +60,7 @@ def manage_sources():
 @user_blueprint.route('/add_sources', methods=['POST'])
 @login_required
 def add_sources():
-    form = SourcesForm(request.form)
+    form = RedditSearchForm(request.form)
     selected = form.search_bar.data.strip(',').split(',')
     user = current_user
     for source in selected:
@@ -77,7 +77,7 @@ def add_sources():
 @user_blueprint.route('/remove_sources', methods=['POST'])
 @login_required
 def remove_sources():
-    form = SourcesForm(request.form)
+    form = RedditSearchForm(request.form)
     selected = form.follow_sources.data
     user = current_user
     current_feeds = user.feeds

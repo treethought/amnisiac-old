@@ -7,11 +7,11 @@
 
 from flask import render_template, Blueprint, request
 
-from project.server.reddit.forms import SourcesForm
-from project.server.sc.forms import SearchForm
-from project.server.reddit.api import hot_posts, split_by_domain, build_sources
-from project.server.models import get_or_create
+from project.server.reddit.forms import RedditSearchForm
+from project.server.sc.forms import ScSearchForm
+from project.server.reddit.api import build_sources, fetch_submissions
 
+from typing import List
 
 ################
 #### config ####
@@ -27,25 +27,31 @@ main_blueprint = Blueprint('main', __name__,)
 
 @main_blueprint.route('/', methods=['GET', 'POST'])
 def home():
-    reddit_form = SourcesForm()
+    reddit_form = RedditSearchForm()
     reddit_form.follow_sources.choices = build_sources()
     reddit_form.process()
-    sc_form = SearchForm()
+    sc_form = ScSearchForm()
     return render_template('main/home.html', reddit_form=reddit_form, sc_form=sc_form)
+
 
 
 @main_blueprint.route('/results', methods=['POST'])
 def results():
-    form = SourcesForm(request.form)
-    sub_query = ''
-    if form.validate_on_submit():
-        subreddits = form.search_bar.data.split(',')
-        for sub in subreddits:
-            sub_query += sub.strip(',').strip('/r/') + '+'
+    reddit_form = RedditSearchForm(request.form)
+    submissions = []
 
-        submissions = hot_posts(sub_query)
-        by_domain = split_by_domain(submissions)
-        return render_template('main/results.html', subreddit=subreddits, by_domain=by_domain)
+    sc_form = ScSearchForm(request.form)
+
+    if reddit_form.search_bar.data and reddit_form.validate_on_submit():
+        print('submitted bitch')
+        subreddits = reddit_form.search_bar.data.split(',')
+        submissions = fetch_submissions(subreddits)
+
+    if sc_form.search_bar.data and sc_form.validate_on_submit():
+        pass
+
+        
+    return render_template('main/results.html', submissions=submissions)
 
 
 @main_blueprint.route('/sources', methods=['GET', 'POST'])

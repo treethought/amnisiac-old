@@ -31,8 +31,11 @@
             </tr>
         </thead>
         <tbody>
-            {% for post in by_domain['youtube'] %}
-            <tr class='table-row-{{post.video_id}}'>
+
+        {% for post in submissions %}
+
+            {% if 'you' in post.domain and post.video_id %}
+                <tr class='table-row-{{post.video_id}}'>
 
                 <th scope="row">
                     <td class="col-sm-2 post-item" id="{{post.video_id}}"></td>
@@ -43,8 +46,10 @@
                     <a href="{{post.url}}">{{post.title}}</a></td>
 
             </tr>
+                
+            {% endif %}
+        {% endfor %}    
 
-            {% endfor %}
         </tbody>
     </table>
 
