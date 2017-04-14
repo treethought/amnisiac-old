@@ -1,4 +1,10 @@
-{% extends "_base.html" %} {% block content %}
+{% extends "_base.html" %} 
+
+{% block title %}
+    Dashboard
+{% endblock %}
+
+{% block content %}
 
 <div class="container">
     <div class="row">
@@ -10,7 +16,7 @@
     </div>
     <div class="row">
         <div class="col-lg-3">
-              <h4><a href="{{ url_for('user.manage_sources') }}">Manage Feeds</a></h4>
+            <h4><a href="{{ url_for('user.manage_sources') }}">Manage Feeds</a></h4>
         </div>
     </div>
 </div>
@@ -33,21 +39,33 @@
 
 
 <div class="container">
-    <h3>Showing items from:</h3><br><br>
-    <div class="col-lg-4">
-    <ul>
-        {% for feed in user.feeds %}
-        <div class="row">
-            <li><a href="{{feed.url}}">{{feed.name}}</a></li>
+    <div class="row">
+
+        <div class="col-lg-5">
+            <h3>Showiing items from:</h3>
         </div>
 
-        {% endfor %}
-    </ul>
-          
     </div>
+
+    <div class="row">
+        <div class="col-lg-5">
+            <ul>
+                {% for feed in user.feeds %}
+                <div class="row">
+                    <div class="col-xs-5">
+                        <li><a href="{{feed.url}}">{{feed.name}}</a></li>
+                    </div>
+                </div>
+
+                {% endfor %}
+
+            </ul>
+        </div>
+    </div>
+
 </div>
 
-{% include 'main/feed.html' %}
 
 
-{% endblock %}
+
+{% include 'main/feed.html' %} {% endblock %}
