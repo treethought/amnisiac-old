@@ -5,14 +5,12 @@
 #### imports ####
 #################
 
-from flask import render_template, Blueprint, request, redirect, make_response, url_for, jsonify
-from flask_login import login_required, current_user
+from flask import render_template, Blueprint, request
 
-from project.server.main.forms import SearchForm, SourcesForm
-from project.server.scrapers.reddit_links import hot_posts, wiki_subs, split_by_domain, build_sources
-from project.server.models import User, Feed, get_or_create
-from project.server import db, app
-from flask_sqlalchemy import BaseQuery, Pagination
+from project.server.reddit.forms import SourcesForm
+from project.server.sc.forms import SearchForm
+from project.server.reddit.api import hot_posts, split_by_domain, build_sources
+from project.server.models import get_or_create
 
 
 ################
@@ -26,27 +24,14 @@ main_blueprint = Blueprint('main', __name__,)
 #### routes ####
 ################
 
+
 @main_blueprint.route('/', methods=['GET', 'POST'])
 def home():
-    form = SourcesForm(request.form)
-    form.follow_sources.choices = build_sources()
-    form.process()
-    return render_template('main/home.html', form=form, sources=sources)
-
-
-@main_blueprint.route('/autocomplete', methods=['GET'])
-def autocomplete():
-    print(request)
-    result = []
-    term = request.args.get('q')
-    app.logger.debug(term)
-
-    for sub in wiki_subs('music', 'musicsubreddits'):
-        if term in sub[:len(term)]:
-            print('found {} in {}'.format(term, sub))
-            result.append(sub)
-
-    return jsonify(matching_results=result)
+    reddit_form = SourcesForm()
+    reddit_form.follow_sources.choices = build_sources()
+    reddit_form.process()
+    sc_form = SearchForm()
+    return render_template('main/home.html', reddit_form=reddit_form, sc_form=sc_form)
 
 
 @main_blueprint.route('/results', methods=['POST'])
@@ -70,6 +55,20 @@ def sources():
     form.follow_sources.choices = subs
     form.process()
     return render_template('main/sources.html', form=form)
+
+# @main_blueprint.route('/autocomplete', methods=['GET'])
+# def autocomplete():
+#     print(request)
+#     result = []
+#     term = request.args.get('q')
+#     app.logger.debug(term)
+
+#     for sub in wiki_subs('music', 'musicsubreddits'):
+#         if term in sub[:len(term)]:
+#             print('found {} in {}'.format(term, sub))
+#             result.append(sub)
+
+#     return jsonify(matching_results=result)
 
 
 @main_blueprint.route("/about/")

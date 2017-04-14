@@ -1,4 +1,4 @@
-# project/server/user/views.py
+# project/server/sc/views.py
 
 
 #################
@@ -6,7 +6,7 @@
 #################
 
 from flask import Blueprint, request, session, jsonify, render_template
-from project.server.main.forms import SearchForm
+from project.server.sc.forms import SearchForm
 from project.server.sc import api
 ################
 #### config ####
@@ -22,9 +22,6 @@ sc_blueprint = Blueprint('sc', __name__,)
 
 @sc_blueprint.route('/load_tracks')
 def load_tracks():
-    print('FROM SESSION!')
-    print(session['query'])
-    print(str(request.args))
     queries = session['query'].split(',')
     # query = request.args.get('artists')
     embeds = []
