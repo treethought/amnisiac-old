@@ -35,7 +35,7 @@
         {% for post in submissions %}
 
             {% if 'you' in post.domain and post.video_id %}
-                <tr class='table-row-{{post.video_id}}'>
+                <tr class='reddit-row'>
 
                 <th scope="row">
                     <td class="col-sm-2 post-item" id="{{post.video_id}}"></td>
@@ -55,8 +55,11 @@
 
 </div>
 
+
+{# FROM SC_RESULTS #}
 <script type="text/javascript">
-    jQuery(document).ready(function($) {
+    $(function() {
+
         var btn = $('#toggle-player');
         var display = $('#now-playing-display');
         btn.hide();
@@ -71,9 +74,48 @@
 
 
         });
+
+
+        // var widget = function(iframeHtml) {
+        //                 // return "<tr<div class='row'><div class='col-xs-5'>" + iframeHtml + "</div></div>"
+        //             };
+
+        var widget = function(track) {
+                        // return "<tr<div class='row'><div class='col-xs-5'>" + iframeHtml + "</div></div>"
+                        return `<tr class='sc-row'>
+                                  <th scope="row">
+                                    <td class="col-sm-2 post-item"></td>
+                                  </th>
+                                    <td>` + track['title'] + `</td>
+                                    <td class="col-sm-5 post-title"></td>
+                                </tr>`
+                                        };
+
+    
+        var iframe_src = '<iframe width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F29517240&show_artwork=true&client_id=10befa86e20c6dc76488371c0c25d99d"></iframe>'
+
+        var iframe_src = function (track) {
+            return "https://w.soundcloud.com/player/?visual=true&url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F29517240&show_artwork=true&client_id=10befa86e20c6dc76488371c0c25d99d"
+        }
+
+
+        $.get("{{ url_for('sc.load_tracks') }}", {
+                artists: "{{artists}}",
+            }, function(data) {
+                console.log('receiving:')
+                console.log(data);
+                for (var i = data.length - 1; i >= 0; i--) {
+                    console.log(data[i])
+                    
+                    $('#feed-table > tbody:last-child').append(widget(data[i]));
+                    // $('#feed-table')
+                }
+                $('#loader_img').hide();
+        });
+
+
     });
 </script>
-
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
