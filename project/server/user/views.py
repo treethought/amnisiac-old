@@ -12,7 +12,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from project.server import bcrypt, db
 from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
-from project.server.scrapers.reddit_links import hot_posts, split_by_domain, build_sources
+from project.server.reddit.api import hot_posts, split_by_domain, build_sources
 from project.server.main.forms import SourcesForm
 
 ################
