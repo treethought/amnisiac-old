@@ -2,17 +2,8 @@
 
 from flask_wtf import Form
 from wtforms import TextField, TextAreaField, SelectMultipleField, widgets
-from wtforms.validators import DataRequired
-from project.server.scrapers.reddit_links import wiki_subs
-
-
-
-class SearchForm(Form):
-    """Home Search bar - uses autocomplete and view func"""
-
-    subreddit = TextField('Subreddit', [DataRequired()], id='search-field', render_kw={'placeholder': 'Enter some subreddits'})
-    # text = TextAreaField('Body')
-
+from wtforms.validators import DataRequired, Optional
+from project.server.reddit.api import wiki_subs
 
 
 class MyTableWidget(widgets.TableWidget):
@@ -57,20 +48,3 @@ class MyTableWidget(widgets.TableWidget):
         return HTMLString(''.join(html))
 
 
-
-class MultiCheckboxField(SelectMultipleField):
-    widget = widgets.ListWidget(prefix_label=False)
-    widget = widgets.TableWidget()
-    # widget = MyTableWidget()
-    option_widget = widgets.CheckboxInput()
-
-
-class SourcesForm(Form):
-    """Used in sources.html - autocompletes using select2 and he multicheckbox"""
-
-    follow_sources = MultiCheckboxField('Subs', id='select-field')
-
-    search_bar = TextField('Search Subreddits', id='search-bar')
-
-
-    
