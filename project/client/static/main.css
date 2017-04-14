@@ -11,12 +11,34 @@ font-family: 'Kreon', serif;*/
 
 }
 
+#source-list {
+    height:200px;
+    border:1px solid black;
+    overflow: scroll;
+}
+/*#source-list {
+    visibility: hidden;
+}
+#source-list .active {
+
+    height:130px;
+    border:1px solid black;
+    overflow: scroll;
+}*/
 /*.row {
   border-color: purple;
   border-style: solid;
   border-width: thin;
   padding: 10px;
 
+}*/
+
+
+/*li {
+    height:200px;
+    margin:0;
+    border:1px solid black;
+}
 }*/
 
 a:hover, a:focus {
@@ -30,16 +52,16 @@ a:hover, a:focus {
 
 }
 
-.feed-list td{
-
+#feed-table {
+   width: auto !important;
 }
 
 
 .feed-list {
-    border-color: purple !important;
+/*    border-color: purple !important;
     border-width: thin !important;
     border-style: solid;
-    /*color: #ffd8fb;*/
+*/    /*color: #ffd8fb;*/
     /*background-color: #5b2c56;*/
     font-size: 20;
     font-family: 'Gloria Hallelujah', cursive;

@@ -6,19 +6,26 @@
         <div class="row">
 
             <div class="col">
-                {{ form.csrf_token }} {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens='only') }} {{ wtf.form_field(form.search_bar)}}
+                {{ reddit_form.csrf_token }} {{ reddit_form.hidden_tag() }} {{ wtf.form_errors(reddit_form, hiddens='only') }} {{ wtf.form_field(reddit_form.search_bar)}}
             </div>
+        </div>
+
+         <div class="row">
+            <div class="col-lg-2">
+                <button type="submit" class="btn btn-success">{{btn_label}}</button>
+            </div>
+
         </div>
 
         <div class="row">
             <div class="col-lg-2">
-                <button type="button" class="btn btn-secondary" id='toggle-sources'>Show list</button>
+                <button type="button" class="btn btn-link" id='toggle-sources'>Show list</button>
             </div>
         </div>
 
         <div class="row">
 
-            <div class="col">
+            <div class="col" id="source-list">
 
                 <table class="table table-invert" id='source-table'>
                     <thead class='thead-default'>
@@ -28,11 +35,11 @@
                             </div>
                         </tr>
                         <tr>
-                            <th>{{form.follow_sources.label}}</th>
+                            <th>{{reddit_form.follow_sources.label}}</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for subfield in form.follow_sources %}
+                        {% for subfield in reddit_form.follow_sources %}
                         <tr>
                             <td>{{subfield}}{{subfield.data}}</td>
                         </tr>
@@ -43,45 +50,52 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-lg-2">
-                <button type="submit" class="btn btn-success">{{btn_label}}</button>
-            </div>
-
-        </div>
-
-
-
-
 
     </form>
 
 
 <script type="text/javascript">
-    var sources = []
+$(document).ready(function() {
+    var source_data = []
+
+
+
+
+
     $("#source-table tr td").each(function() {
-        sources.push($(this).text());
+        source_data.push($(this).text());
     });
-    console.log(sources)
-
-    $('#source-table').hide();
-    $('#nav').hide();
-
 
     $('#search-bar').select2({
         multiple: true,
         placeholder: '/r/',
-        data: sources,
+        data: source_data,
         tags: true,
 
     });
 
-    $("#toggle-sources").click(function() {
-        $('#nav').show();
-        $('#source-table').toggle();
+    console.log(source_data)
+
+    $('#source-list').hide();
+    $('#nav').hide();
 
 
+    var btn = $('#toggle-sources');
+    var sources = $('#source-list');
+    btn.click(function() {
+        if (sources.is(':visible')) {
+            sources.hide();
+            btn.text('show list')
+        } else {
+            sources.show();
+            btn.text('hide list')
+        }
+
+
+    });
+    
 });
+
 
 
 
