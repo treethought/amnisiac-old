@@ -5,6 +5,23 @@ from wtforms import TextField, TextAreaField, SelectMultipleField, widgets
 from wtforms.validators import DataRequired, Optional
 from project.server.reddit.api import wiki_subs
 
+class MultiCheckboxField(SelectMultipleField):
+    widget = widgets.ListWidget(prefix_label=False)
+    widget = widgets.TableWidget()
+    # widget = MyTableWidget()
+    option_widget = widgets.CheckboxInput()
+
+
+class HomeSearchForm(Form):
+    """Used in sources.html - autocompletes using select2 and he multicheckbox"""
+
+    follow_sources = MultiCheckboxField('Subs', id='select-field', validators=[Optional()])
+
+    reddit_search = TextField('Search Subreddits', id='reddit-search-bar')
+
+    sc_search = TextField('Search Soundcloud', id='sc-search-bar', render_kw={'placeholder': 'Search for an artist'})
+
+
 
 class MyTableWidget(widgets.TableWidget):
     """

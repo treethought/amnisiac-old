@@ -5,7 +5,7 @@ import soundcloud
 
 
 # type annotations
-from typing import Iterable, List
+from typing import Iterable, List, Dict
 from soundcloud.resource import Resource
 
 
@@ -14,15 +14,13 @@ client = soundcloud.Client(
     client_secret=os.getenv('SOUNDCLOUD_CLIENT_ID'))
 
 
-def fetch_tracks(artists: List[str]) -> Iterable[Resource]:
+def fetch_tracks(artists: List[str]) ->Iterable[Dict]:
+    """ Generator yielding the internal dicts of track resources """
     for q in [q for q in artists if len(q) > 1]:
-        print('getting artist -- {}'.format(q))
         artist = get_user(q.strip())
-        for track in api.user_tracks(artist):
+        for track in user_tracks(artist):
             track_data = {'id': track.id, 'title': track.title, 'stream': track.stream_url}
-            print('getting -- {}'.format(track.title))
             yield track
-
 
 def search_user(name: str) -> Iterable[Resource]:
     """Generator yielding Resource objects from search results"""

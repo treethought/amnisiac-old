@@ -45,7 +45,7 @@ def hot_posts(sub: str) -> List[Submission]:
             if post.media:
                 post.video_id = get_video_id(post.domain, post.url)
                 result.append(post)
-
+                
     except praw.exceptions.PRAWException as e:
         print('No subreddit found for {}'.format(sub))
     return result
