@@ -12,11 +12,12 @@ function onYouTubeIframeAPIReady() {
     console.log('In youtubeready');
 
     var postItems = document.getElementsByClassName('post-item');
-    console.log('Number of posts: ' + postItems.length)
+    console.log('Number of reddit posts: ' + postItems.length)
 
     Array.from(postItems).forEach(function(elem, i) {
+        console.log(elem.classList.contains('reddit-post'));
 
-        if (i === 0) {}
+        if (elem.classList.contains('reddit-post')) {
 
         // Render Icon
         var icon = document.createElement("img");
@@ -127,7 +128,8 @@ function onYouTubeIframeAPIReady() {
 
         };
 
-    });
+    }
+});
 
 }
 
