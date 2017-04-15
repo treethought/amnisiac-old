@@ -1,0 +1,132 @@
+{% import "bootstrap/wtf.html" as wtf %} {# {% block sub_search %} #}
+
+
+<form class='form' role='form' method="post" action="{{action}}">
+
+    <div class="row">
+
+        <div class="col">
+            {{ form.csrf_token }} {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens='only') }} {{ wtf.form_field(form.reddit_search)}} {{wtf.form_field(form.sc_search)}}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-2">
+            <button type="submit" class="btn btn-success">{{btn_label}}</button>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-lg-2">
+            <button type="button" class="btn btn-link" id='toggle-sources'>Show list</button>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col" id="source-list">
+
+            <table class="table table-invert" id='source-table'>
+                <thead class='thead-default'>
+                    <tr>
+                        <div class="col-lg-5">
+                            <div id='nav'></div>
+                        </div>
+                    </tr>
+                    <tr>
+                        <th>{{form.follow_sources.label}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subfield in form.follow_sources %}
+                    <tr>
+                        <td>{{subfield}}{{subfield.data}}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+
+</form>
+
+
+<script type="text/javascript">
+$(function() {
+
+    // Autocomplete reddit search with select2
+
+    // build sources from table
+    var source_data = []
+    $("#source-table tr td").each(function() {
+        source_data.push($(this).text());
+    });
+
+    // initialize w/ select2
+    $('#reddit-search-bar').select2({
+        multiple: true,
+        placeholder: '/r/',
+        data: source_data,
+        tags: true,
+
+    });
+
+
+    $('#source-list').hide();
+    $('#nav').hide();
+
+
+    // toggling source table
+    var btn = $('#toggle-sources');
+    var sources = $('#source-list');
+    btn.click(function() {
+        if (sources.is(':visible')) {
+            sources.hide();
+            btn.text('show list')
+        } else {
+            sources.show();
+            btn.text('hide list')
+        }
+
+
+    });
+
+
+    // Autocomplete sc search w/ jquery autocomplete ajax call
+
+    function split(val) {
+        return val.split(/,\s*/);
+    }
+
+    function extractLast(term) {
+        return split(term).pop();
+    }
+
+    $("#sc-search-bar").autocomplete({
+        source: function(request, response) {
+            console.log(request.term)
+            $.getJSON("{{url_for('sc.autocomplete')}}", {
+                q: extractLast(request.term), // in flask, "q" will be the argument to look for using request.args
+            }, function(data) {
+                console.log(data.results);
+                var source_data = data.results;
+                response(data.results); // matching_results from jsonify
+            });
+        },
+        minLength: 3,
+        select: function(event, ui) {
+            // console.log(ui.item.value); // not in your question, but might help later
+            var terms = split(this.value);
+            terms.pop();
+            terms.push(ui.item.value);
+            terms.push("");
+            this.value = terms.join(", ");
+            return false;
+        }
+    })
+
+});
+</script>
