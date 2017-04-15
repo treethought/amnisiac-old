@@ -12,6 +12,13 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-lg">
+            <div id='sc-player-div'>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div><button type="button" class="btn btn-link" id='toggle-player' data-toggle="button" aria-pressed="false" autocomplete="off">Hide Player</button> </div>
@@ -32,23 +39,46 @@
         </thead>
         <tbody>
 
-        {% for post in submissions %}
+        {% for item in items %}
 
-            {% if 'you' in post.domain and post.video_id %}
-                <tr class='reddit-row'>
+            {% if 'Submission' in item.__class__.__name__ %}
+                {% if 'you' in item.domain and item.video_id %}
+                    <tr class='reddit-row'>
 
-                <th scope="row">
-                    <td class="col-sm-2 post-item" id="{{post.video_id}}"></td>
+                        <th scope="row">
+                            <td class="col-sm-2 post-item reddit-post" id="{{item.video_id}}"></td>
 
-                </th>
-                <td>{{post.subreddit}}</td>
-                <td class="col-sm-5 post-title" id="{{post.video_id}}-title">
-                    <a href="{{post.url}}">{{post.title}}</a></td>
+                        </th>
+                        <td>{{item.subreddit}}</td>
+                        <td class="col-sm-5 post-title" id="{{item.video_id}}-title">
+                            <a href="{{item.url}}">{{item.title}}</a></td>
 
-            </tr>
-                
+                    </tr>
+                {% endif %}
+            {% endif %} 
+
+            {% if 'Resource' in item.__class__.__name__ %}
+                <tr class='sc-row'>
+
+                        <th scope="row">
+                            <td class="col-sm-2 post-item sc-post" id="{{item.id}}"></td>
+
+                        </th>
+                        <td>{{item.user['username']}}</td>
+                        <td>{{item.title}}</td>
+                       {#  <td class="col-sm-5 post-title" id="{{item.video_id}}-title">
+                            <a href="{{item.url}}">{{tem.title}}</a></td>
+ #}
+                    </tr>
             {% endif %}
-        {% endfor %}    
+
+
+
+
+
+            {% endfor %} 
+
+  
 
         </tbody>
     </table>
@@ -56,68 +86,32 @@
 </div>
 
 
-{# FROM SC_RESULTS #}
 <script type="text/javascript">
-    $(function() {
+$(function() {
 
-        var btn = $('#toggle-player');
-        var display = $('#now-playing-display');
-        btn.hide();
-        display.hide();
-        btn.click(function() {
-            display.toggle();
-            if (display.is(':visible')) {
-                btn.text('hide video player')
-            } else {
-                btn.text('show video player')
-            }
-
-
-        });
-
-
-        // var widget = function(iframeHtml) {
-        //                 // return "<tr<div class='row'><div class='col-xs-5'>" + iframeHtml + "</div></div>"
-        //             };
-
-        var widget = function(track) {
-                        // return "<tr<div class='row'><div class='col-xs-5'>" + iframeHtml + "</div></div>"
-                        return `<tr class='sc-row'>
-                                  <th scope="row">
-                                    <td class="col-sm-2 post-item"></td>
-                                  </th>
-                                    <td>` + track['title'] + `</td>
-                                    <td class="col-sm-5 post-title"></td>
-                                </tr>`
-                                        };
-
-    
-        var iframe_src = '<iframe width="100%" height="400" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?visual=true&url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F29517240&show_artwork=true&client_id=10befa86e20c6dc76488371c0c25d99d"></iframe>'
-
-        var iframe_src = function (track) {
-            return "https://w.soundcloud.com/player/?visual=true&url=https%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F29517240&show_artwork=true&client_id=10befa86e20c6dc76488371c0c25d99d"
+    var btn = $('#toggle-player');
+    var display = $('#now-playing-display');
+    btn.hide();
+    display.hide();
+    btn.click(function() {
+        display.toggle();
+        if (display.is(':visible')) {
+            btn.text('hide video player')
+        } else {
+            btn.text('show video player')
         }
 
-
-        $.get("{{ url_for('sc.load_tracks') }}", {
-                artists: "{{artists}}",
-            }, function(data) {
-                console.log('receiving:')
-                console.log(data);
-                for (var i = data.length - 1; i >= 0; i--) {
-                    console.log(data[i])
-                    
-                    $('#feed-table > tbody:last-child').append(widget(data[i]));
-                    // $('#feed-table')
-                }
-                $('#loader_img').hide();
-        });
-
-
     });
+});
+
 </script>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <script src="https://www.youtube.com/iframe_api"></script>
+{# <script src="{{url_for('static', filename='scWidgetSource.js')}}"></script> #}
+<script src="https://w.soundcloud.com/player/api.js" type="text/javascript"></script>
+
 <script src="{{url_for('static', filename='youtube.js')}}"></script>
+<script src="{{url_for('static', filename='soundcloud.js')}}"></script>
+
