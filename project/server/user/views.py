@@ -11,7 +11,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from project.server import bcrypt, db
 from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
-from project.server.reddit.api import hot_posts, split_by_domain, build_sources
+from project.server.reddit.api import hot_posts, split_by_domain, build_sources, fetch_submissions
 from project.server.reddit.forms import RedditSearchForm
 
 ################
@@ -28,16 +28,14 @@ user_blueprint = Blueprint('user', __name__,)
 @user_blueprint.route('/dashboard')
 @login_required
 def dashboard():
-    sub_query = ''
-    by_domain = {}
+    subs = []
+    items = []
     for feed in current_user.feeds:
-        sub_query += feed.name.strip().strip('/r/') + '+'
+        subs.append(feed.name.strip().strip('/r/'))
 
-    if sub_query: #TODO
-        submissions = hot_posts(sub_query)
-        by_domain = split_by_domain(submissions)
+    items.extend(fetch_submissions(subs))
 
-    return render_template('user/dashboard.html', user=current_user, submissions=submissions)
+    return render_template('user/dashboard.html', user=current_user, items=items)
 
 
 @user_blueprint.route('/manage_sources', methods=['GET', 'POST'])
