@@ -66,7 +66,8 @@ class Feed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     url = db.Column(db.String(), unique=True, nullable=False)
+    domain = db.Column(db.String(), unique=False, nullable=True)
 
 
     def __repr__(self):
-        return '<Feed:{}>'.format(self.name)
+        return '<Feed:{} from {}>'.format(self.name, self.domain)

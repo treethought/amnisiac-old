@@ -1,15 +1,102 @@
 {% extends "_base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block content %} {{ current_user.email }}
 
 
+
 <div class="container">
     <div class="row">
 
-        <div class="col-lg-5">
-            <h3>Current Subscriptions</h3>
+        <div class="col-xs-5">
+            <h3>Current Feeds</h3>
+            <form class='form' role='form' method="post" action="{{url_for('user.remove_sources')}}">
+
+                {{ current.csrf_token }}{{ current.hidden_tag() }} {{ wtf.form_errors(current, hiddens='only') }} {% for subfield in current.follow_sources %}
+
+                <div class="row">
+                    <div class="col-lg col-xs">
+                        {{subfield}}{{subfield.data}}
+                    </div>
+                </div>
+
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-lg-2">
+                        <button type="submit" class="btn btn-primary">Remove</button>
+                    </div>
+                </div>
+            </form>
+
         </div>
 
-        <div class="col-lg-5">
-            <h3>Add New Subscriptions</h3>
+    </div>
+
+    <div class="row">
+        
+        <div class="col-xs-5">
+              <h3>Add New Feeds</h3>
+        {# <div class="col-lg-5"> #}
+            {% set action=url_for('user.add_sources') %}
+            {% set btn_label='Subscribe' %}
+            {% set form=new %}
+            {% include 'main/main_search.html' %}
+        {# </div> #}
+        </div>
+    </div>  
+
+
+</div>
+
+
+
+
+
+
+
+
+{# 
+
+
+
+<div class="container">
+    <div class="row">
+      <div class="col-lg-5">
+         <h3>Current Subscriptions</h3>
+      </div>
+
+      <div class="col-lg-5">
+
+        <div class="row">
+            <div class="col-xs-5">
+                <h3>Add New Subscriptions</h3>
+            </div>
+        </div>
+
+
+
+
+
+
+        <div class="col-xs-5">
+            <form class='form' role='form' method="post" action="{{url_for('user.remove_sources')}}">
+
+                {{ current.csrf_token }}{{ current.hidden_tag() }} {{ wtf.form_errors(current, hiddens='only') }} {% for subfield in current.follow_sources %}
+
+                <div class="row">
+                    <div class="col-lg col-xs">
+                        {{subfield}}{{subfield.data}}
+                    </div>
+                </div>
+
+                {% endfor %}
+
+                <div class="row">
+                    <div class="col-lg-2">
+                        <button type="submit" class="btn btn-primary">Remove</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+           
         </div>
 
     </div>
@@ -48,7 +135,7 @@
 
 
 </div>
-
+ #}
 
 
 {% endblock %}

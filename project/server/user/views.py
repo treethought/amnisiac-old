@@ -8,11 +8,16 @@ from flask import render_template, Blueprint, url_for, \
     redirect, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 
-from project.server import bcrypt, db
+from project.server import bcrypt, db, app
 from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
-from project.server.reddit.api import hot_posts, split_by_domain, build_sources, fetch_submissions
+from project.server.reddit.api import build_sources, fetch_submissions
 from project.server.reddit.forms import RedditSearchForm
+from project.server.main.forms import HomeSearchForm
+
+from project.server.sc.api import get_user, fetch_tracks
+
+from typing import List
 
 ################
 #### config ####
@@ -29,11 +34,18 @@ user_blueprint = Blueprint('user', __name__,)
 @login_required
 def dashboard():
     subs = []
-    items = []
-    for feed in current_user.feeds:
-        subs.append(feed.name.strip().strip('/r/'))
+    sc_artists = []
 
-    items.extend(fetch_submissions(subs))
+    for feed in current_user.feeds:
+        if feed.domain == 'reddit':
+            subs.append(feed.name.strip().strip('/r/'))
+        elif feed.domain == 'sc':
+            sc_artists.append(feed.name)
+
+    reddit_posts = fetch_submissions(subs)
+    sc_tracks = fetch_tracks(sc_artists)
+
+    items = sum(map(list, zip(reddit_posts, sc_tracks)), [])
 
     return render_template('user/dashboard.html', user=current_user, items=items)
 
@@ -42,7 +54,7 @@ def dashboard():
 @login_required
 def manage_sources():
     new_sources = build_sources()
-    new = RedditSearchForm(request.form)
+    new = HomeSearchForm()
     new.follow_sources.choices = new_sources
     new.process()
 
@@ -57,12 +69,26 @@ def manage_sources():
 @user_blueprint.route('/add_sources', methods=['POST'])
 @login_required
 def add_sources():
-    form = RedditSearchForm(request.form)
-    selected = form.search_bar.data.strip(',').split(',')
+    items = {}
     user = current_user
-    for source in selected:
+    form = HomeSearchForm(request.form)
+
+    if form.validate_on_submit():
+        reddits = form.reddit_search.data.strip().split(',')
+        sc_artists = form.sc_search.data.strip().split(',')
+
+    for source in filter(None, reddits):
+        app.logger.debug('adding {} from reddit'.format(source))
         name, url = source, 'http://reddit.com' + source
-        feed = get_or_create(db.session, Feed, name=name, url=url)
+        feed = get_or_create(db.session, Feed, name=name, url=url, domain='reddit')
+        if feed not in current_user.feeds:
+            user.feeds.append(feed)
+
+    for source in filter(None, sc_artists):
+        app.logger.debug('adding {} from sc'.format(source))
+        artist = get_user(source)
+        name, url = source, artist.permalink_url
+        feed = get_or_create(db.session, Feed, name=name, url=url, domain='sc')
         if feed not in user.feeds:
             user.feeds.append(feed)
 
@@ -91,7 +117,6 @@ def remove_sources():
     db.session.add(user)
     db.session.commit()
     return redirect(url_for('user.manage_sources'))
-
 
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])
