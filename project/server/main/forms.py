@@ -22,6 +22,20 @@ class HomeSearchForm(Form):
     sc_search = TextField('Search Soundcloud', id='sc-search-bar', render_kw={'placeholder': 'Search for an artist'})
 
 
+class RedditSearchForm(Form):
+    """Used in sources.html - autocompletes using select2 and he multicheckbox"""
+
+    follow_sources = MultiCheckboxField('Subs', id='select-field', validators=[Optional()])
+
+    reddit_search = TextField('Search Subreddits', id='search-bar')
+
+
+class ScSearchForm(Form):
+    """Home Search bar - uses autocomplete and view func"""
+
+    sc_search = TextField('Search Soundcloud', [DataRequired()],
+                             id='search-field', render_kw={'placeholder': 'Search for an artist'})
+
 
 class MyTableWidget(widgets.TableWidget):
     """

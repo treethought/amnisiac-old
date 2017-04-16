@@ -7,13 +7,10 @@
 
 from flask import render_template, Blueprint, request, session
 
-from project.server.reddit.forms import RedditSearchForm
-from project.server.sc.forms import ScSearchForm
+
 from project.server.main.forms import HomeSearchForm
 from project.server.reddit.api import build_sources, fetch_submissions
 from project.server.sc.api import fetch_tracks
-
-from typing import List, Dict
 
 ################
 #### config ####
@@ -34,21 +31,18 @@ def home():
     search_form.process()
     return render_template('main/home.html', form=search_form)
 
-
 @main_blueprint.route('/results', methods=['POST'])
 def results():
-    reddit_form = RedditSearchForm(request.form)
-    sc_form = ScSearchForm(request.form)
-
+    form = HomeSearchForm(request.form)
     items = []
 
-    if reddit_form.reddit_search.data and reddit_form.validate_on_submit():
-        subreddits = reddit_form.reddit_search.data.split(',')
+    if form.validate_on_submit():
+        subreddits = form.reddit_search.data.split(',')
         items.extend(fetch_submissions(subreddits))
 
-    if sc_form.sc_search.data and sc_form.validate_on_submit():
-        sc_artists = sc_form.sc_search.data.split(',')
+        sc_artists = form.sc_search.data.split(',')
         items.extend(fetch_tracks(sc_artists))
+
 
     return render_template('main/results.html', items=items)
 
