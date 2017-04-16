@@ -38,11 +38,20 @@ $(function() {
 
         function createWidget(trackUrl) {
 
+            // var yt_frame = document.getElementById('youtube-player')
+            // if (yt_frame) {yt_frame.remove();}
             var widgetDiv = document.getElementById('sc-player-div');
             var widgetIframe = document.createElement('iframe');
 
+
+            // widget options
+            var theme_color = '&theme_color=efd2eb';
+            var show_comments = '&show_comments=true';
+
             // src contains widget api url + the track api url
-            widgetIframe.setAttribute('src', 'https://w.soundcloud.com/player/?url=' + trackUrl);
+            widgetIframe.setAttribute('src', 'https://w.soundcloud.com/player/?url=' + trackUrl + theme_color + show_comments);
+
+
    
             widgetIframe.setAttribute('id', 'sc-player');
             widgetIframe.setAttribute('width', '100%');
@@ -54,19 +63,22 @@ $(function() {
             widget.bind(SC.Widget.Events.READY, function() {
 
                 widget.bind(SC.Widget.Events.PLAY, function() {
+                    
 
                     // get information about currently playing sound
                     widget.getCurrentSound(function(currentSound) {
                       console.log('playing '+ trackUrl);
-                      // console.log('sound ' + currentSound + 'began to play');
                     });
 
                 });
 
-                widget.bind(SC.Widget.Events.FINISHED, function() {
-                    console.log('finishing')
-                      console.log('finishing track ' + i);
-                        document.getElementById('post-icon-' + (i + 1)).click();
+                widget.bind(SC.Widget.Events.FINISH, function() {
+                    console.log('finishing track ' + i);
+                    widgetIframe.remove();
+                    widget = null;
+                    toggleButon(false);
+                    document.getElementById('post-icon-' + (i + 1)).click();
+                    
                   });
 
                 // get current level of volume
@@ -90,16 +102,56 @@ $(function() {
             var trackUrl = 'http://api.soundcloud.com/tracks/' + elem.id;
             
             if (widget) { // prbly a better way tto do this
-                document.getElementById('sc-player').remove();
+                console.log('widget exists')
+
+                widget.getCurrentSound(function(currentSound) {
+                    console.log('current and elem ids:');
+                    console.log(currentSound.id);
+                    console.log(elem.id);
+
+                    if (currentSound.id === elem.id) {
+                        console.log('clicked on current playing element')
+
+
+                        widget.isPaused(function(paused) {
+                            console.log('paused is ' + paused);
+                            if (paused) {
+                                widget.play();
+                            } else {
+                                widget.pause();
+                            }
+                            toggleButon(!paused);
+                        })
+                    }
+
+                    else {
+                        console.log('creating first widget')
+                        widget.load(trackUrl);
+                        // widget.play();
+                        toggleButon(true);
+                    }
+
+                })
+
+                //     console.log('Paused is ' + paused);
+                // })
+                // document.getter(index_name: any)tElementById('sc-player').remove();
+
             }
 
-            createWidget(trackUrl);
-            toggleButon();
-
-            $('#now-playing-display').show('slow');
-            $('#toggle-player').show('slow');
-            console.log('CREATED FIRST SC PLAYER with:' + elem.id);
+            else {
+                createWidget(trackUrl);
+                toggleButon(true);
+                $('#now-playing-display').show('slow');
+                $('#toggle-player').show('slow');
+                console.log('CREATED FIRST SC PLAYER with:' + elem.id);
             
+            }
+
+            
+
+            
+           
         })
              
   }
