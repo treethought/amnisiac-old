@@ -37,7 +37,6 @@ $(function() {
         }
 
         function createWidget(trackUrl) {
-            // var trackUrl = 'http://api.soundcloud.com/tracks/' + trackId;
 
             var widgetDiv = document.getElementById('sc-player-div');
             var widgetIframe = document.createElement('iframe');
@@ -46,6 +45,8 @@ $(function() {
             widgetIframe.setAttribute('src', 'https://w.soundcloud.com/player/?url=' + trackUrl);
    
             widgetIframe.setAttribute('id', 'sc-player');
+            widgetIframe.setAttribute('width', '100%');
+            // widgetIframe.setAttribute('height', 465)
             widgetDiv.append(widgetIframe);
 
             widget = SC.Widget(widgetIframe);
@@ -64,7 +65,8 @@ $(function() {
 
                 widget.bind(SC.Widget.Events.FINISHED, function() {
                     console.log('finishing')
-                      startNext(i);
+                      console.log('finishing track ' + i);
+                        document.getElementById('post-icon-' + (i + 1)).click();
                   });
 
                 // get current level of volume
@@ -74,10 +76,10 @@ $(function() {
                 // set new volume level
                 widget.setVolume(50);
                 // get the value of the current position
+                console.log('Just made widget for icon ' + i);
 
             widget.play();
             });
-
 
         }
 
@@ -92,6 +94,7 @@ $(function() {
             }
 
             createWidget(trackUrl);
+            toggleButon();
 
             $('#now-playing-display').show('slow');
             $('#toggle-player').show('slow');

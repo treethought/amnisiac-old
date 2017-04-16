@@ -35,7 +35,14 @@ function onYouTubeIframeAPIReady() {
         var toggleButon = function(e) {
             var iconSource = e ? "IDzX9gL.png" : "quyUPXN.png";
 
+            if (!elem.classList.contains('active')) {
+                elem.classList.add('active');
+                elem.style.backgroundColor = '#efd2eb';
+            } 
+
+
             icon.setAttribute("src", "https://i.imgur.com/" + iconSource);
+            console.log(elem);
         };
 
         var startNext = function () {
