@@ -49,7 +49,7 @@ $(function() {
             var show_comments = '&show_comments=true';
 
             // src contains widget api url + the track api url
-            widgetIframe.setAttribute('src', 'https://w.soundcloud.com/player/?url=' + trackUrl + theme_color + show_comments);
+            widgetIframe.setAttribute('src', 'https://w.soundcloud.com/player/?url=' + trackUrl);
 
 
    

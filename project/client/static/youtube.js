@@ -38,6 +38,7 @@ function onYouTubeIframeAPIReady() {
             if (!elem.classList.contains('active')) {
                 elem.classList.add('active');
                 elem.style.backgroundColor = '#efd2eb';
+                elem.parentElement.style.backgroundColor = '#efd2eb';
             } 
 
 
@@ -122,7 +123,6 @@ function onYouTubeIframeAPIReady() {
                         if (e.data === YT.PlayerState.ENDED) {
                             toggleButon(false);
                             startNext();
-                            // start next post
                         }
                     }
                 }
