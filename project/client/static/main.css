@@ -17,9 +17,7 @@ font-family: 'Kreon', serif;*/
     overflow: scroll;
 }
 
-tr.active {
-    background-color: #efd92b;
-}
+
 
 /*#source-list {
     visibility: hidden;
@@ -59,6 +57,13 @@ a:hover, a:focus {
 
 #feed-table {
    width: auto !important;
+   
+
+}
+
+
+tr.active {
+    background-color: #efd2eb;
 }
 
 
@@ -70,6 +75,9 @@ a:hover, a:focus {
     /*background-color: #5b2c56;*/
     font-size: 20;
     font-family: 'Gloria Hallelujah', cursive;
+    height: 500px;
+   border: 2px solid #5b2c56;
+   overflow: scroll;
 }
 
 

@@ -1,4 +1,4 @@
-<div class="container-fluid" id="now-playing-display">
+<div class="container" id="now-playing-display">
     <div class="row">
 
         <div class="col-xs-4">
@@ -24,7 +24,7 @@
 <div><button type="button" class="btn btn-link" id='toggle-player' data-toggle="button" aria-pressed="false" autocomplete="off">Hide Player</button> </div>
 
 
-<div class="container feed-list col-xs-7">
+<div class="container feed-list col-xs-12 col-md-7">
 
     <table class="table table-responsive table-striped col-xs-7" id="feed-table">
         <thead>
@@ -46,6 +46,7 @@
                     <tr class='reddit-row'>
 
                         <th scope="row">
+                        <td><img src="http://findicons.com/files/icons/2779/simple_icons/4096/reddit_4096_black.png" width='40' height='40'></td>
                             <td class="col-xs-2 post-item reddit-post" id="{{item.video_id}}"></td>
 
                         </th>
@@ -61,6 +62,7 @@
                 <tr class='sc-row'>
 
                         <th scope="row">
+                        <td> <img src="https://developers.soundcloud.com/assets/logo_big_black-4fbe88aa0bf28767bbfc65a08c828c76.png" width='40' height='40'></td>
                             <td class="col-xs-2 post-item sc-post" id="{{item.id}}"></td>
 
                         </th>
