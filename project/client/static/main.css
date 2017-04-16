@@ -16,6 +16,11 @@ font-family: 'Kreon', serif;*/
     border:1px solid black;
     overflow: scroll;
 }
+
+tr.active {
+    background-color: #efd92b;
+}
+
 /*#source-list {
     visibility: hidden;
 }
@@ -77,6 +82,11 @@ h1 {
 h3 {
     font-family: 'Kreon', serif;
 }
+
+/*.page-title {
+    background-color: black;
+    color: #efd2eb;
+}*/
 
 /* navbar */
 .navbar-default {

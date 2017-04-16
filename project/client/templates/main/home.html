@@ -1,24 +1,55 @@
 {% extends "_base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block content %}
 
 
-<div class="container">
+<div class="container col-xs-8 ">
     <div class="row">
 
-        <div class="col-lg-5 col-xs-5">
-            <h1>Welcome!</h1>
+        <div class="col-xs">
+            <h1>Welcome to currio!</h1>
         </div>
 
     </div>
 
     <div class="row">
-        <div class="col-lg col-xs">
-            <h3>To get started enter the name of a subreddit you'd like to see</h3>
+
+        <div class="col-xs-2">
+              <img src="http://www.endlessicons.com/wp-content/uploads/2012/10/Cauldron-icon.png"
+              width="170" height="170">
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-8">
+            <h2><i>"Baby, you got a stew goin!</i></h2>
         </div>
     </div>
 
+      {#   <div class="col-xs-6">
+            <h2><i>"Baby, you got a stew goin!</i></h2>
+               <img src="https://cdn4.iconfinder.com/data/icons/nature-and-ecology-line-icons-vol-3/48/116-512.png" width="100" height="100">
+
+            
+              {# <img src="https://cdn4.iconfinder.com/data/icons/nature-and-ecology-solid-icons-vol-3/48/116-512.png"
+              width="100" height="100"> #}
 </div>
+ 
+        
+        
 
-<div class="container">
+
+
+
+
+{#     <div class="row">
+        <div class="col-lg col-xs">
+            <h3>To get started, search for subreddits or soundcloud artists</h3>
+        </div>
+    </div> #}
+
+
+
+<div class="container col-xs-6">
     {% set action=url_for('main.results') %}
     {% set btn_label='Listen' %}
     {% include 'main/main_search.html' %}
