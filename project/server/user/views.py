@@ -17,7 +17,6 @@ from project.server.main.forms import HomeSearchForm
 
 from project.server.sc.api import get_user, fetch_tracks
 
-from typing import List
 
 ################
 #### config ####
