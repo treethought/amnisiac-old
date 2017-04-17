@@ -287,6 +287,7 @@ var clickSC = function(elem, i) {
             } else {
                 console.log('creating new widget')
                 widget.load(trackUrl(elem.id));
+                widget.play();
             }
 
         })
