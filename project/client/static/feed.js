@@ -1,15 +1,26 @@
-
+// Feed Table 
 
 var postItems = document.getElementsByClassName('post-item');
 
-var toggleButon = function(playing, elem, i) {
-    var iconSource = playing ? "IDzX9gL.png" : "quyUPXN.png";  // if playing set pause symbol, else set play symbol
 
-    if (!elem.classList.contains('active')) {
-        elem.classList.add('active');
-        elem.style.backgroundColor = '#efd2eb';
-        elem.parentElement.style.backgroundColor = '#efd2eb';
+var removeHighights = function() {
+    console.log('removing highlights');
+    for (var i = postItems.length - 1; i >= 0; i--) {
+        postItems[i].parentNode.classList.remove('active');
+        toggleButon(false, i);
     }
+}
+
+var highlightRow = function(elem, i) {
+    console.log('clicked icon for elem ' + i);
+    removeHighights();
+    elem.parentNode.classList.add('active');
+    toggleButon(true, i);
+
+}
+
+var toggleButon = function(playing, i) {
+    var iconSource = playing ? "IDzX9gL.png" : "quyUPXN.png"; // if playing set pause symbol, else set play symbol
 
     icon = document.getElementById("post-icon-" + i);
 
@@ -34,9 +45,15 @@ Array.from(postItems).forEach(function(elem, i) {
     icon.setAttribute('class', "img-responsive")
     elem.appendChild(icon);
 
+    icon.addEventListener('click', function() {
+        highlightRow(elem, i);
+    })
+
 
     elem.addEventListener('click', function() {
         console.log('clicked post ' + i);
+
+        // highlightRow(i);
 
         if (elem.className.includes('reddit')) {
             console.log('Reddit: yt_id: ' + elem.id);
@@ -53,62 +70,115 @@ Array.from(postItems).forEach(function(elem, i) {
 
 })
 
-// Soundcloud
 
-var widget = null;
+//////////////
+// Youtube //
+/////////////
 
+var player = null;
 
-
-
-
-var setUpWidget = function(w, frame, elem, i) {
-
-    w.bind(SC.Widget.Events.LOAD_PROGRESS, function() {
-        console.log('loading');
-        });
-
-    w.bind(SC.Widget.Events.READY, function() {
-        console.log('widget ready')
-
-        w.bind(SC.Widget.Events.PLAY, function() {
-            // get information about currently playing sound
-            w.getCurrentSound(function(currentSound) {
-                console.log('playback started for  ' + currentSound.title + '-- track ' + i);
-            });
-            toggleButon(true, elem, i);
-
-        });
-
-        w.bind(SC.Widget.Events.PAUSE, function() {
-            w.getCurrentSound(function(currentSound) {
-                console.log('playback paused for  ' + currentSound.title + '-- track ' + i);
-            });
-            toggleButon(false, elem, i);
-
-        });
-
-
-
-        w.bind(SC.Widget.Events.FINISH, function() {
-            console.log('finishing track ' + i);
-            widget = null; // assign null to global widget var used to check
-            frame.remove();
-            toggleButon(false, elem, i);
-            startNext(i);
-
-        });
-
-        // get current level of volume
-        w.getVolume(function(volume) {
-            // console.log('current volume value is ' + volume);
-        });
-        // set new volume level
-        w.setVolume(50);
-        // get the value of the current position
-
-     w.play();   
-    });
+var removeYT = function() {
+    if (YT.get('youtube-player')) {
+        console.log('destroying current yt frame');
+        YT.get('youtube-player').destroy();
+    }
 }
+
+var renderYT = function makePlayer (elem, i) {
+    console.log('creating youtube-player frame for ' + elem.id);
+
+    player = new YT.Player("youtube-player", {
+        // // height: "100",
+        // width: "0",
+        videoId: elem.id,
+        playerVars: {
+            autoplay: true,
+            loop: false,
+            color: 'purple',
+            controls: 2,
+            enablejsapi: 1
+        },
+        events: {
+            onReady: function(e) {
+                e.target.setPlaybackQuality("medium");
+                console.log('new video is ready')
+                // toggleButon(e.target.getPlayerState() !== YT.PlayerState.CUED);
+
+            },
+            onStateChange: function(e) {
+                if (e.data === YT.PlayerState.ENDED) {
+                    console.log('Finished video for post ' + i);
+                    toggleButon(false, i);
+                    player.destroy();
+                    player = null;
+                    startNext(i);
+                }
+            }
+        }
+    });
+    return player
+};
+
+
+function clickYT(elem, i) {
+
+    removeSC();
+
+    if (!YT.get('youtube-player')) {
+
+        if (document.contains(document.getElementById("sc-player"))) {
+            document.getElementById("sc-player").remove();
+        }
+
+        renderYT(elem, i);
+        toggleButon(true, i);
+        $('#now-playing-display').show('slow');
+        $('#toggle-player').show('slow');
+
+        console.log('created first yt player with:' + elem.id);
+
+    } else {
+        console.log('clicked while iframe exists')
+
+        if (player.a.src.toString().includes(elem.id)) {
+            console.log('Clicked current item');
+            console.log(player.getPlayerState());
+
+            // playing or buffering
+            if (player.getPlayerState() === 1 || player.getPlayerState() === 3) {
+
+                console.log('pausing current video ' + elem.id)
+                player.pauseVideo();
+                toggleButon(false, i);
+            }
+
+            // cued 
+            if (player.getPlayerState() === 5 || player.getPlayerState() === 2) {
+
+                console.log('playing current video ' + elem.id);
+                player.playVideo();
+                toggleButon(true, i);
+            }
+
+
+        } else { // start new vid
+            console.log('starting new video ' + elem.id)
+            toggleButon(false, i);
+            player.destroy();
+            renderYT(elem, i);
+            toggleButon(true, i)
+
+        }
+    }
+}
+
+
+
+
+/////////////////
+// Soundcloud //
+////////////////
+var widget = null;
 
 var trackUrl = function(trackId) {
     return 'http://api.soundcloud.com/tracks/' + trackId;
@@ -116,8 +186,14 @@ var trackUrl = function(trackId) {
 
 var widgetUrl = function(trackId) {
     // src contains widget api url + the track api url
-    // var trackUrl = 'http://api.soundcloud.com/tracks/' + elem.id;
     return 'https://w.soundcloud.com/player/?url=' + trackUrl(trackId);
+}
+
+var removeSC = function() {
+    if (document.contains(document.getElementById('sc-player'))) {
+        console.log('removing current sc widget')
+        document.getElementById('sc-player').remove();
+    }
 }
 
 var renderSC = function(elem, i) {
@@ -134,20 +210,66 @@ var renderSC = function(elem, i) {
     setUpWidget(widget, widgetIframe, elem, i);
 }
 
-var scPausedCallback = function(paused, elem, i) {
-    console.log('element ' + i + 'paused: ' + paused);
-    if (paused) {
-        widget
-    }
+var setUpWidget = function(w, frame, elem, i) {
+
+    w.bind(SC.Widget.Events.LOAD_PROGRESS, function() {
+        console.log('loading');
+    });
+
+    w.bind(SC.Widget.Events.READY, function() {
+        console.log('widget ready')
+
+        w.bind(SC.Widget.Events.PLAY, function() {
+            // get information about currently playing sound
+            w.getCurrentSound(function(currentSound) {
+                console.log('playback started for  ' + currentSound.title + '-- track ' + i);
+            });
+            toggleButon(true, i);
+
+        });
+
+        w.bind(SC.Widget.Events.PAUSE, function() {
+            w.getCurrentSound(function(currentSound) {
+                console.log('playback paused for  ' + currentSound.title + '-- track ' + i);
+            });
+            toggleButon(false, i);
+
+        });
+
+
+
+        w.bind(SC.Widget.Events.FINISH, function() {
+            console.log('finishing track ' + i);
+            widget = null; // assign null to global widget var used to check
+            frame.remove();
+             
+            toggleButon(false, i);
+            startNext(i);
+
+        });
+
+        // get current level of volume
+        w.getVolume(function(volume) {
+            // console.log('current volume value is ' + volume);
+        });
+        // set new volume level
+        w.setVolume(50);
+        // get the value of the current position
+
+        w.play();
+    });
 }
 
 var clickSC = function(elem, i) {
+
+    removeYT();
+
     if (widget) { // prbly a better way tto do this
-        console.log('widget exists')
+        console.log('widget exists');
 
 
         widget.getCurrentSound(function(currentSound) {
-  
+
             if (currentSound.id.toString() === elem.id) {
                 console.log('clicked on current sc element')
 
@@ -178,95 +300,3 @@ var clickSC = function(elem, i) {
 
     }
 }
-
-
-// Youtube Iframe creation and controls
-
-var renderYT = function(elem, i) {
-    console.log('creating youtube-player frame for ' + elem.id);
-
-    console.log('in ytready')
-
-    player = new YT.Player("youtube-player", {
-        // // height: "100",
-        // width: "0",
-        videoId: elem.id,
-        playerVars: {
-            autoplay: true,
-            loop: false,
-            color: 'purple',
-            controls: 2,
-            enablejsapi: 1
-        },
-        events: {
-            onReady: function(e) {
-                e.target.setPlaybackQuality("medium");
-                // toggleButon(e.target.getPlayerState() !== YT.PlayerState.CUED);
-
-            },
-            onStateChange: function(e) {
-                if (e.data === YT.PlayerState.ENDED) {
-                    console.log('Finished video for post ' + i);
-                    toggleButon(false, elem, i);
-                    player.destroy();
-                    startNext(i);
-                }
-            }
-        }
-    });
-    return player
-};
-
-
-
-var player = null;
-
-
-function clickYT(elem, i) {
-
-
-    if (!YT.get('youtube-player')) {
-
-        renderYT(elem, i);
-        toggleButon(true, elem, i);
-        $('#now-playing-display').show('slow');
-        $('#toggle-player').show('slow');
-
-        console.log('created first yt player with:' + elem.id);
-
-    } else {
-        console.log('clicked while iframe exists')
-
-        if (player.a.src.toString().includes(elem.id)) {
-            console.log('Clicked current item');
-            console.log(player.getPlayerState());
-
-            // playing or buffering
-            if (player.getPlayerState() === 1 || player.getPlayerState() === 3) {
-
-                console.log('pausing current video ' + elem.id)
-                player.pauseVideo();
-                toggleButon(false, elem, i);
-            }
-
-            // cued 
-            if (player.getPlayerState() === 5 || player.getPlayerState() === 2) {
-
-                console.log('playing current video ' + elem.id);
-                player.playVideo();
-                toggleButon(true, elem, i);
-            }
-
-
-        } else { // start new vid
-            console.log('starting new video ' + elem.id)
-            toggleButon(false, elem, i);
-            renderYT(elem, i);
-
-            // player.playVideo()
-            toggleButon(true, elem, i)
-
-        }
-    }
-}
-// }

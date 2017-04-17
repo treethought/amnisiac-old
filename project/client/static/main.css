@@ -61,10 +61,11 @@ a:hover, a:focus {
 
 }
 
-
-tr.active {
-    background-color: #efd2eb;
+.post-row.active > * {
+    background-color: #efd2eb !important;
 }
+
+
 
 
 .feed-list {

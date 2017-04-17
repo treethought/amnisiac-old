@@ -43,7 +43,7 @@
 
             {% if 'Submission' in item.__class__.__name__ %}
                 {% if 'you' in item.domain and item.video_id %}
-                    <tr class='reddit-row'>
+                    <tr class='reddit-row post-row'>
 
                         <th scope="row">
                         <td><img src="http://findicons.com/files/icons/2779/simple_icons/4096/reddit_4096_black.png" width='40' height='40'></td>
@@ -59,7 +59,7 @@
             {% endif %} 
 
             {% if 'Resource' in item.__class__.__name__ %}
-                <tr class='sc-row'>
+                <tr class='sc-row post-row'>
 
                         <th scope="row">
                         <td> <img src="https://developers.soundcloud.com/assets/logo_big_black-4fbe88aa0bf28767bbfc65a08c828c76.png" width='40' height='40'></td>
