@@ -1,7 +1,9 @@
+
+
 var postItems = document.getElementsByClassName('post-item');
 
-var toggleButon = function(e, elem, i) {
-    var iconSource = e ? "IDzX9gL.png" : "quyUPXN.png";
+var toggleButon = function(playing, elem, i) {
+    var iconSource = playing ? "IDzX9gL.png" : "quyUPXN.png";  // if playing set pause symbol, else set play symbol
 
     if (!elem.classList.contains('active')) {
         elem.classList.add('active');
@@ -12,12 +14,11 @@ var toggleButon = function(e, elem, i) {
     icon = document.getElementById("post-icon-" + i);
 
     icon.setAttribute("src", "https://i.imgur.com/" + iconSource);
-    console.log(elem);
 };
 
-var startNext = function (i) {
-            document.getElementById('post-icon-'+(i+1)).click();
-        }
+var startNext = function(i) {
+    document.getElementById('post-icon-' + (i + 1)).click();
+}
 
 Array.from(postItems).forEach(function(elem, i) {
 
@@ -35,29 +36,151 @@ Array.from(postItems).forEach(function(elem, i) {
 
 
     elem.addEventListener('click', function() {
-        console.log('clicked post ' + i + '-- videoId: ' + elem.id);
+        console.log('clicked post ' + i);
 
         if (elem.className.includes('reddit')) {
+            console.log('Reddit: yt_id: ' + elem.id);
             clickYT(elem, i);
         } else {
+            console.log('Soundcloud: sc_id: ' + elem.id);
             clickSC(elem, i);
         }
 
-        // toggleButon(true);
-        var now = document.getElementById('#now-playing-display')
-        var btn = document.getElementById('#toggle-player')
-
         $('#now-playing-display').show('slow');
         $('#toggle-player').show('slow');
-
-
 
     })
 
 })
 
+// Soundcloud
+
+var widget = null;
 
 
+
+
+
+var setUpWidget = function(w, frame, elem, i) {
+
+    w.bind(SC.Widget.Events.LOAD_PROGRESS, function() {
+        console.log('loading');
+        });
+
+    w.bind(SC.Widget.Events.READY, function() {
+        console.log('widget ready')
+
+        w.bind(SC.Widget.Events.PLAY, function() {
+            // get information about currently playing sound
+            w.getCurrentSound(function(currentSound) {
+                console.log('playback started for  ' + currentSound.title + '-- track ' + i);
+            });
+            toggleButon(true, elem, i);
+
+        });
+
+        w.bind(SC.Widget.Events.PAUSE, function() {
+            w.getCurrentSound(function(currentSound) {
+                console.log('playback paused for  ' + currentSound.title + '-- track ' + i);
+            });
+            toggleButon(false, elem, i);
+
+        });
+
+
+
+        w.bind(SC.Widget.Events.FINISH, function() {
+            console.log('finishing track ' + i);
+            widget = null; // assign null to global widget var used to check
+            frame.remove();
+            toggleButon(false, elem, i);
+            startNext(i);
+
+        });
+
+        // get current level of volume
+        w.getVolume(function(volume) {
+            // console.log('current volume value is ' + volume);
+        });
+        // set new volume level
+        w.setVolume(50);
+        // get the value of the current position
+
+     w.play();   
+    });
+}
+
+var trackUrl = function(trackId) {
+    return 'http://api.soundcloud.com/tracks/' + trackId;
+}
+
+var widgetUrl = function(trackId) {
+    // src contains widget api url + the track api url
+    // var trackUrl = 'http://api.soundcloud.com/tracks/' + elem.id;
+    return 'https://w.soundcloud.com/player/?url=' + trackUrl(trackId);
+}
+
+var renderSC = function(elem, i) {
+    console.log('creating widget for elem ' + i);
+    var widgetDiv = document.getElementById('sc-player-div');
+    var widgetIframe = document.createElement('iframe');
+
+    widgetIframe.setAttribute('src', widgetUrl(elem.id));
+    widgetIframe.setAttribute('id', 'sc-player');
+    widgetIframe.setAttribute('width', '100%');
+
+    widgetDiv.append(widgetIframe);
+    widget = SC.Widget(widgetIframe);
+    setUpWidget(widget, widgetIframe, elem, i);
+}
+
+var scPausedCallback = function(paused, elem, i) {
+    console.log('element ' + i + 'paused: ' + paused);
+    if (paused) {
+        widget
+    }
+}
+
+var clickSC = function(elem, i) {
+    if (widget) { // prbly a better way tto do this
+        console.log('widget exists')
+
+
+        widget.getCurrentSound(function(currentSound) {
+  
+            if (currentSound.id.toString() === elem.id) {
+                console.log('clicked on current sc element')
+
+                widget.isPaused(function(paused) {
+                    console.log('paused is ' + paused);
+                    if (paused) {
+                        console.log('playing')
+                        widget.play();
+                    } else {
+                        console.log('pausing');
+                        widget.pause();
+
+                    }
+                })
+            } else {
+                console.log('creating new widget')
+                widget.load(trackUrl(elem.id));
+            }
+
+        })
+
+    } else {
+        console.log('creating first sc widget')
+        renderSC(elem, i);
+        $('#now-playing-display').show('slow');
+        $('#toggle-player').show('slow');
+
+
+    }
+}
+
+
+// Youtube Iframe creation and controls
 
 var renderYT = function(elem, i) {
     console.log('creating youtube-player frame for ' + elem.id);
@@ -83,7 +206,9 @@ var renderYT = function(elem, i) {
             },
             onStateChange: function(e) {
                 if (e.data === YT.PlayerState.ENDED) {
+                    console.log('Finished video for post ' + i);
                     toggleButon(false, elem, i);
+                    player.destroy();
                     startNext(i);
                 }
             }
@@ -107,7 +232,7 @@ function clickYT(elem, i) {
         $('#now-playing-display').show('slow');
         $('#toggle-player').show('slow');
 
-        console.log('CREATED FIRST PLAYER with:' + elem.id);
+        console.log('created first yt player with:' + elem.id);
 
     } else {
         console.log('clicked while iframe exists')
@@ -135,7 +260,6 @@ function clickYT(elem, i) {
 
         } else { // start new vid
             console.log('starting new video ' + elem.id)
-            player.destroy();
             toggleButon(false, elem, i);
             renderYT(elem, i);
 
