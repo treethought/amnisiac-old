@@ -8,6 +8,8 @@ from flask import render_template, Blueprint, url_for, \
     redirect, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 
+import itertools
+
 from project.server import bcrypt, db, app
 from project.server.models import User, Feed, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
@@ -44,7 +46,9 @@ def dashboard():
     reddit_posts = fetch_submissions(subs)
     sc_tracks = fetch_tracks(sc_artists)
 
-    items = sum(map(list, zip(reddit_posts, sc_tracks)), [])
+    items = []
+    for i in list(itertools.zip_longest(reddit_posts, sc_tracks)):
+        items.extend(i)
 
     return render_template('user/dashboard.html', user=current_user, items=items)
 
