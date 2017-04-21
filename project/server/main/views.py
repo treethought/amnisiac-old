@@ -4,6 +4,7 @@
 #################
 #### imports ####
 #################
+import itertools
 
 from flask import render_template, Blueprint, request, session
 
@@ -31,6 +32,7 @@ def home():
     search_form.process()
     return render_template('main/home.html', form=search_form)
 
+
 @main_blueprint.route('/results', methods=['POST'])
 def results():
     form = HomeSearchForm(request.form)
@@ -38,11 +40,13 @@ def results():
 
     if form.validate_on_submit():
         subreddits = form.reddit_search.data.split(',')
-        items.extend(fetch_submissions(subreddits))
+        reddit_posts = fetch_submissions(subreddits)
 
         sc_artists = form.sc_search.data.split(',')
-        items.extend(fetch_tracks(sc_artists))
+        sc_tracks = fetch_tracks(sc_artists)
 
+        for i in list(itertools.zip_longest(reddit_posts, sc_tracks)):
+            items.extend(i)
 
     return render_template('main/results.html', items=items)
 
