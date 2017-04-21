@@ -30,6 +30,7 @@
         <thead>
             <tr>
                 <th></th>
+                <th>Source</th>
                 <th></th>
                 <th>Subreddit</th>
                 <th>Title</th>
@@ -43,11 +44,13 @@
 
             {% if 'Submission' in item.__class__.__name__ %}
                 {% if 'you' in item.domain and item.video_id %}
-                    <tr class='reddit-row post-row'>
+                    {% set sourceRowName = item.subreddit|lower() %}
+
+                    <tr class='reddit-row post-row {{sourceRowName}}-source'>
 
                         <th scope="row">
                         <td><img src="http://findicons.com/files/icons/2779/simple_icons/4096/reddit_4096_black.png" width='40' height='40'></td>
-                            <td class="col-xs-2 post-item reddit-post" id="{{item.video_id}}"></td>
+                        <td class="col-xs-2 post-item reddit-post" id="{{item.video_id}}"></td>
 
                         </th>
                         <td>{{item.subreddit}}</td>
@@ -59,7 +62,9 @@
             {% endif %} 
 
             {% if 'Resource' in item.__class__.__name__ %}
-                <tr class='sc-row post-row'>
+                    {% set sourceRowName = item.user['username']|replace(' ','-')|lower() %}
+                    
+                <tr class="sc-row post-row {{sourceRowName}}-source">
 
                         <th scope="row">
                         <td> <img src="https://developers.soundcloud.com/assets/logo_big_black-4fbe88aa0bf28767bbfc65a08c828c76.png" width='40' height='40'></td>

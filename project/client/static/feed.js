@@ -28,8 +28,22 @@ var toggleButon = function(playing, i) {
 };
 
 var startNext = function(i) {
-    document.getElementById('post-icon-' + (i + 1)).click();
-}
+
+    console.log('in start next')
+
+
+    for (var next = i + 1; next < postItems.length; next++) {
+        console.log('checking if ' + next + 'is visible')
+
+        var item = $('#post-icon-' + next);
+
+        if (item.is(':visible')) {
+            item.click();
+            break;
+        }
+
+    }
+};
 
 Array.from(postItems).forEach(function(elem, i) {
 
@@ -84,7 +98,7 @@ var removeYT = function() {
     }
 }
 
-var renderYT = function makePlayer (elem, i) {
+var renderYT = function makePlayer(elem, i) {
     console.log('creating youtube-player frame for ' + elem.id);
 
     player = new YT.Player("youtube-player", {
@@ -102,7 +116,7 @@ var renderYT = function makePlayer (elem, i) {
             onReady: function(e) {
                 e.target.setPlaybackQuality("medium");
                 console.log('new video is ready')
-                // toggleButon(e.target.getPlayerState() !== YT.PlayerState.CUED);
+                    // toggleButon(e.target.getPlayerState() !== YT.PlayerState.CUED);
 
             },
             onStateChange: function(e) {
@@ -242,7 +256,7 @@ var setUpWidget = function(w, frame, elem, i) {
             console.log('finishing track ' + i);
             widget = null; // assign null to global widget var used to check
             frame.remove();
-             
+
             toggleButon(false, i);
             startNext(i);
 
