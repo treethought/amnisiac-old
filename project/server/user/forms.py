@@ -7,14 +7,14 @@ from wtforms.validators import DataRequired, Email, Length, EqualTo
 
 
 class LoginForm(Form):
-    email = StringField('Email Address', [DataRequired(), Email()])
+    username = StringField('Email Address', [DataRequired()])
     password = PasswordField('Password', [DataRequired()])
 
 
 class RegisterForm(Form):
-    email = StringField(
-        'Email Address',
-        validators=[DataRequired(), Email(message=None), Length(min=6, max=40)])
+    username = StringField(
+        'Username',
+        validators=[DataRequired(), Length(min=5, max=40)])
     password = PasswordField(
         'Password',
         validators=[DataRequired(), Length(min=6, max=25)]

@@ -3,61 +3,67 @@
 <div class="container">
     <div class="row">
 
-        <div class="col-lg-5">
-            <h1 class='page-title'>Dashboard</h1>
-            <h3>{{user.email}}</h3>
+        <div class="col-lg-6">
+            <h1 class='page-title'>{{user.username}} :: Dashboard</h1>
         </div>
     </div>
-    <div class="row">
-        <div class="col-lg-3">
-            <h4><a href="{{ url_for('user.manage_sources') }}">Manage Feeds</a></h4>
-        </div>
-    </div>
-</div>
 
-
-{% if not user.feeds %}
-
-<div>
-    <h3>
-        It looks like you havent added any feeds.
-        Head over to the <a href="{{ url_for('main.sources') }}">Feed Sources</a> to subscribe to some tunes!
-    </h3>
-</div>
-
-{% endif %}
-
-
-
-
-
-
-<div class="container">
-    <div class="row">
-
-        <div class="col-lg-5">
-            <h3>Your Feeds:</h3>
-        </div>
-
-    </div>
-
-    <div class="row">
-        <div class="col-lg-5">
-
-            {% for feed in user.feeds %} {% set sourceRowName = feed.name|replace(' ', '-')|lower() %}
+    {% if not user.feeds %}
+        <div class="container">
             <div class="row">
-                <div class="col-xs-5">
-                    <input checked type="checkbox" name="toggle-{{sourceRowName}}" class='toggle-filter'><a href="{{feed.url}}"> {{feed.name}}</a></li>
+
+                <div class="col-lg-5">
+                    <h3>
+                        It looks like you havent added any feeds. <br>
+                        <a href="{{ url_for('user.manage_sources') }}">Add some sources</a> to get a feed goin!
+                    </h3>
+                </div>
+
+            </div>
+                                                            
+
+        </div>
+
+
+    {% else %}
+        <div class="row">
+            <div class="col-lg-3">
+                <h4><a href="{{ url_for('user.manage_sources') }}">Manage Feeds</a></h4>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-5">
+                    <h3>Your Feeds:</h3>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-lg-5">
+
+                    {% for feed in user.feeds %} {% set sourceRowName = feed.name|replace(' ', '-')|lower() %}
+                    <div class="row">
+                        <div class="col-xs-5">
+                            <input checked type="checkbox" name="toggle-{{sourceRowName}}" class='toggle-filter'><a href="{{feed.url}}"> {{feed.name}}</a></li>
+                        </div>
+                    </div>
+
+                    {% endfor %}<br><br>
+
                 </div>
             </div>
 
-            {% endfor %}
-
         </div>
-    </div>
 
-</div>
 
+
+    {% endif %}
+
+
+    
 <script type="text/javascript">
     var feedToggles = $('.toggle-filter');
     Array.from(feedToggles).forEach(function(elem, id) {
@@ -77,5 +83,7 @@
 
 
 
-
-{% include 'main/feed.html' %} {% endblock %}
+{% if user.feeds %}
+    {% include 'main/feed.html' %} 
+{% endif %}
+{% endblock %}
