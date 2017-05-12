@@ -6,7 +6,8 @@
 #################
 import itertools
 
-from flask import render_template, Blueprint, request, session
+from flask import render_template, Blueprint, request, session, redirect, url_for
+from flask_login import current_user
 
 
 from project.server.main.forms import HomeSearchForm
@@ -24,8 +25,14 @@ main_blueprint = Blueprint('main', __name__,)
 #### routes ####
 ################
 
+@main_blueprint.route('/', methods=['GET'])
+def landing():
+    if current_user.is_authenticated:
+        return redirect(url_for('user.dashboard'))
+    return redirect(url_for('main.home'))
 
-@main_blueprint.route('/', methods=['GET', 'POST'])
+
+@main_blueprint.route('/home', methods=['GET', 'POST'])
 def home():
     search_form = HomeSearchForm()
     search_form.follow_sources.choices = build_sources()
@@ -58,20 +65,6 @@ def sources():
     form.follow_sources.choices = subs
     form.process()
     return render_template('main/sources.html', form=form)
-
-# @main_blueprint.route('/autocomplete', methods=['GET'])
-# def autocomplete():
-#     print(request)
-#     result = []
-#     term = request.args.get('q')
-#     app.logger.debug(term)
-
-#     for sub in wiki_subs('music', 'musicsubreddits'):
-#         if term in sub[:len(term)]:
-#             print('found {} in {}'.format(term, sub))
-#             result.append(sub)
-
-#     return jsonify(matching_results=result)
 
 
 @main_blueprint.route("/about/")
