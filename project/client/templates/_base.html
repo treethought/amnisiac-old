@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
 <head>
     <meta charset="utf-8">
     <title>amnisiac{% block title %}{% endblock %}</title>
@@ -69,6 +68,9 @@
     <br><br> {% include 'footer.html' %}
 
     <!-- scripts -->
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+    </script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="{{url_for('static', filename='main.js')}}" type="text/javascript"></script>
     {% block js %}{% endblock %}
