@@ -1,60 +1,3 @@
-{% import "bootstrap/wtf.html" as wtf %} {# {% block sub_search %} #}
-
-
-<form class='form' role='form' method="post" action="{{action}}">
-
-    <div class="row">
-
-        <div class="col">
-            {{ form.csrf_token }} {{ form.hidden_tag() }} {{ wtf.form_errors(form, hiddens='only') }} {{ wtf.form_field(form.reddit_search)}} {{wtf.form_field(form.sc_search)}}
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-2">
-            <button type="submit" class="btn btn-success">{{btn_label}}</button>
-        </div>
-
-    </div>
-
-    <div class="row">
-        <div class="col-lg-2">
-            <button type="button" class="btn btn-link" id='toggle-sources'>Show list</button>
-        </div>
-    </div>
-
-    <div class="row">
-
-        <div class="col" id="source-list">
-
-            <table class="table table-invert" id='source-table'>
-                <thead class='thead-default'>
-                    <tr>
-                        <div class="col-lg-5">
-                            <div id='nav'></div>
-                        </div>
-                    </tr>
-                    <tr>
-                        <th>{{form.follow_sources.label}}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for subfield in form.follow_sources %}
-                    <tr>
-                        <td>{{subfield}}{{subfield.data}}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-
-        </div>
-    </div>
-
-
-</form>
-
-
-<script type="text/javascript">
 $(function() {
 
     // Autocomplete reddit search with select2
@@ -108,7 +51,7 @@ $(function() {
     $("#sc-search-bar").autocomplete({
         source: function(request, response) {
             console.log(request.term)
-            $.getJSON("{{url_for('sc.autocomplete')}}", {
+            $.getJSON($SCRIPT_ROOT + '/sc_autocomplete', {
                 q: extractLast(request.term), // in flask, "q" will be the argument to look for using request.args
             }, function(data) {
                 console.log(data.results);
@@ -129,4 +72,3 @@ $(function() {
     })
 
 });
-</script>
