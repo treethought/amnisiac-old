@@ -58,15 +58,6 @@ def results():
     return render_template('main/results.html', items=items)
 
 
-@main_blueprint.route('/sources', methods=['GET', 'POST'])
-def sources():
-    subs = build_sources()
-    form = SourcesForm(request.form)
-    form.follow_sources.choices = subs
-    form.process()
-    return render_template('main/sources.html', form=form)
-
-
 @main_blueprint.route("/about/")
 def about():
     return render_template("main/about.html")
