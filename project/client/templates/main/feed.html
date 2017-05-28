@@ -29,7 +29,7 @@
     <table class="table table-responsive table-striped col-xs-7" id="feed-table">
         <thead>
             <tr>
-                <th></th>
+                {# <th></th> #}
                 <th></th>
                 <th>Source</th>
                 <th>Title</th>
@@ -47,7 +47,7 @@
 
                 <tr class='reddit-row post-row {{sourceRowName}}-source'>
 
-                  <th scope="row">
+                  {# <th scope="row"> #}
                   <td class="col-xs-2 post-item reddit-post" id="{{item.video_id}}"></td>
 
                   <td><img src="{{url_for('static', filename='icons/reddit.png')}}" width='40' height='40'><br>
@@ -65,7 +65,7 @@
 
                 <tr class="sc-row post-row {{sourceRowName}}-source">
 
-                  <th scope="row">
+                  {# <th scope="row"> #}
                   <td class="col-xs-2 post-item sc-post" id="{{item.id}}"></td>
 
                   <td><img src="{{url_for('static', filename='icons/soundcloud.png')}}" width='40' height='40'><br>

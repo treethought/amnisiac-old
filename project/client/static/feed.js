@@ -50,12 +50,16 @@ Array.from(postItems).forEach(function(elem, i) {
     // Render Icon
     var icon = document.createElement("img");
     icon.setAttribute("id", "post-icon-" + i);
-    icon.setAttribute("class", 'icon img-responsive');
+    icon.setAttribute("class", 'icon');
     icon.setAttribute("src", "https://i.imgur.com/" + "quyUPXN.png");
 
     icon.style.cssText = "cursor:pointer;cursor:hand";
-    icon.style.height = '50px';
-    icon.style.width = '50px';
+    icon.style.maxHeight = '50%';
+    icon.style.maxWidth = '50%';
+    icon.style.minWidth = '40%'
+    icon.style.minHeight = '40%'
+    // icon.style.objectFit = 'contain';
+    icon.style.display = 'block';
 
     elem.appendChild(icon);
 
