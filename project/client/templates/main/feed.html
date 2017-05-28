@@ -7,9 +7,7 @@
     </div>
 
     <div class="row">
-        <div class="col-lg">
-            <div class="youtube-player" data-video="" data-autoplay="0" data-loop="1" id="youtube-player">
-            </div>
+        <div class="youtube-player col-md-12" data-video="" data-autoplay="0" data-loop="1" id="youtube-player">
         </div>
     </div>
 
@@ -24,9 +22,9 @@
 <div><button type="button" class="btn btn-link" id='toggle-player' data-toggle="button" aria-pressed="false" autocomplete="off">Hide Player</button> </div>
 
 
-<div class="container feed-list col-xs-12 col-md-7">
+<div class="container feed-list">
 
-    <table class="table table-responsive table-striped col-xs-7" id="feed-table">
+    <table class="table table-striped col-md-7" id="feed-table">
         <thead>
             <tr>
                 {# <th></th> #}
@@ -47,13 +45,13 @@
 
                 <tr class='reddit-row post-row {{sourceRowName}}-source'>
 
-                  {# <th scope="row"> #}
-                  <td class="col-xs-2 post-item reddit-post" id="{{item.video_id}}"></td>
+                  
+                  <td class="col-xs-4 col-md-2 post-item reddit-post" height="100%" id="{{item.video_id}}"></td>
 
                   <td><img src="{{url_for('static', filename='icons/reddit.png')}}" width='40' height='40'><br>
                   {{item.subreddit}}</td>
                   
-                  <td class="col-xs-5 post-title" id="{{item.video_id}}-title">
+                  <td class="post-title" id="{{item.video_id}}-title">
                   <a href="{{item.url}}">{{item.title}}</a></td>
 
                 </tr>

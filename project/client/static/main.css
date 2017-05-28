@@ -55,16 +55,33 @@ a:hover, a:focus {
 
 }
 
-#feed-table {
+#feed-list {
    /*width: auto !important;*/
-
+   margin: 0px auto;
 }
 
 .post-row.active > * {
     background-color: #efd2eb !important;
 }
 
+.youtube-player {
+  max-width: 100%;
+  margin: 0px auto;
+}
 
+.youtube-player > div {
+  position: relative;
+  padding-bottom: 75%;
+  height: 0px;
+}
+
+.youtube-player iframe {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
 
 
 .feed-list {
@@ -73,6 +90,7 @@ a:hover, a:focus {
     border-style: solid;
 */    /*color: #ffd8fb;*/
     /*background-color: #5b2c56;*/
+    margin: 0px auto;
     font-size: 20;
     font-family: 'Gloria Hallelujah', cursive;
     height: 500px;
