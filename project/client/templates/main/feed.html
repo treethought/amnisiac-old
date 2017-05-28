@@ -30,10 +30,10 @@
         <thead>
             <tr>
                 <th></th>
-                <th>Source</th>
                 <th></th>
-                <th>Subreddit</th>
+                <th>Source</th>
                 <th>Title</th>
+                <th></th>
 
             </tr>
         </thead>
@@ -42,38 +42,38 @@
         {% for item in items %}
 
             {% if 'Submission' in item.__class__.__name__ %}
-                {% if 'you' in item.domain and item.video_id %}
-                    {% set sourceRowName = item.subreddit|lower() %}
+              {% if 'you' in item.domain and item.video_id %}
+                {% set sourceRowName = item.subreddit|lower() %}
 
-                    <tr class='reddit-row post-row {{sourceRowName}}-source'>
+                <tr class='reddit-row post-row {{sourceRowName}}-source'>
 
-                        <th scope="row">
-                        <td><img src="{{url_for('static', filename='icons/reddit.png')}}" width='40' height='40'></td>
-                        <td class="col-xs-2 post-item reddit-post" id="{{item.video_id}}"></td>
+                  <th scope="row">
+                  <td class="col-xs-2 post-item reddit-post" id="{{item.video_id}}"></td>
 
-                        </th>
-                        <td>{{item.subreddit}}</td>
-                        <td class="col-xs-5 post-title" id="{{item.video_id}}-title">
-                            <a href="{{item.url}}">{{item.title}}</a></td>
+                  <td><img src="{{url_for('static', filename='icons/reddit.png')}}" width='40' height='40'><br>
+                  {{item.subreddit}}</td>
+                  
+                  <td class="col-xs-5 post-title" id="{{item.video_id}}-title">
+                  <a href="{{item.url}}">{{item.title}}</a></td>
 
-                    </tr>
-                {% endif %}
+                </tr>
+              {% endif %}
             {% endif %} 
 
             {% if 'Resource' in item.__class__.__name__ %}
-                    {% set sourceRowName = item.user['username']|replace(' ','-')|lower() %}
-                    
+              {% set sourceRowName = item.user['username']|replace(' ','-')|lower() %}
+
                 <tr class="sc-row post-row {{sourceRowName}}-source">
 
-                        <th scope="row">
-                        <td> <img src="{{url_for('static', filename='icons/soundcloud.png')}}" width='40' height='40'></td>
-                        <td class="col-xs-2 post-item sc-post" id="{{item.id}}"></td>
+                  <th scope="row">
+                  <td class="col-xs-2 post-item sc-post" id="{{item.id}}"></td>
 
-                        </th>
-                        <td>{{item.user['username']}}</td>
-                        <td>{{item.title}}</td>
+                  <td><img src="{{url_for('static', filename='icons/soundcloud.png')}}" width='40' height='40'><br>
+                  {{item.user['username']}}</td>
 
-                    </tr>
+                  <td>{{item.title}}</td>
+
+                </tr>
             {% endif %}
 
             {% endfor %} 

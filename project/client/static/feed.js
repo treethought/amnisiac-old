@@ -50,13 +50,13 @@ Array.from(postItems).forEach(function(elem, i) {
     // Render Icon
     var icon = document.createElement("img");
     icon.setAttribute("id", "post-icon-" + i);
-    icon.setAttribute("class", 'icon');
+    icon.setAttribute("class", 'icon img-responsive');
     icon.setAttribute("src", "https://i.imgur.com/" + "quyUPXN.png");
 
     icon.style.cssText = "cursor:pointer;cursor:hand";
     icon.style.height = '50px';
     icon.style.width = '50px';
-    icon.setAttribute('class', "img-responsive")
+
     elem.appendChild(icon);
 
     icon.addEventListener('click', function() {
@@ -115,8 +115,9 @@ var renderYT = function makePlayer(elem, i) {
         events: {
             onReady: function(e) {
                 e.target.setPlaybackQuality("medium");
-                console.log('new video is ready')
-                    // toggleButon(e.target.getPlayerState() !== YT.PlayerState.CUED);
+                console.log('new video is ready');
+                e.target.playVideo();
+                toggleButon(true, i);
 
             },
             onStateChange: function(e) {
