@@ -114,7 +114,8 @@ var renderYT = function makePlayer(elem, i) {
             loop: false,
             color: 'purple',
             controls: 2,
-            enablejsapi: 1
+            enablejsapi: 1,
+            // origin: $SCRIPT_ROOT
         },
         events: {
             onReady: function(e) {
