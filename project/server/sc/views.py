@@ -20,24 +20,6 @@ sc_blueprint = Blueprint('sc', __name__,)
 ################
 
 
-# @sc_blueprint.route('/load_tracks')
-# def load_tracks():
-#     queries = session['sc_artists'].split(',')
-#     embeds = []
-#     for q in [q for q in queries if len(q) > 1]:
-#         print('getting artist -- {}'.format(q))
-#         artist = api.get_user(q.strip())
-#         i = 0
-#         for track in api.user_tracks(artist):
-#             if i > 10:
-#                 break
-#             print('getting -- {}'.format(track.title))
-#             html = api.embed_info(track.permalink_url)
-#             embeds.append(html)
-#             i += 1
-#     return jsonify(embeds)
-
-
 """WIHOUT EMBEDS< JUST TRACK INFO"""
 @sc_blueprint.route('/load_tracks')
 def load_tracks():
