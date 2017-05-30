@@ -18,7 +18,25 @@ font-family: 'Kreon', serif;*/
 }
 
 
+button.btn.toggle-filter {
+  color: purple;
+  background-color: white;
+  border-color: purple;
 
+
+}
+
+button.btn.toggle-filter.active {
+  color: gray;
+  border-color: grey;
+  /*background-color: white;*/
+}
+
+.feed-selection {
+/*  border-style: solid;
+  border-width: thin;
+  border-color: #efd2eb
+*/}
 /*#source-list {
     visibility: hidden;
 }
