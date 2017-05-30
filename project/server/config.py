@@ -50,3 +50,5 @@ class ProductionConfig(BaseConfig):
     SECRET_KEY = os.getenv('SECRET_KEY')
     DEBUG = False
     DEBUG_TB_ENABLED = False
+    SEND_FILE_MAX_AGE_DEFAULT = 0 # for refeshing static files
+
