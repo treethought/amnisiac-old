@@ -18,6 +18,7 @@
           <li><a href="{{ url_for('main.about') }}">About</a></li>
           {% if current_user.is_authenticated %}
            <li><a href="{{ url_for('user.dashboard') }}">Dashboard</a></li>
+           <li><a href="{{ url_for('user.user_favorites') }}">Favorites</a></li>
           {% endif %}
         </ul>
         <ul class="nav navbar-nav navbar-right">
