@@ -40,39 +40,39 @@
 
         {% for item in items %}
 
-            {% if 'Submission' in item.__class__.__name__ %}
-              {% if 'you' in item.domain and item.video_id %}
+            {% if 'reddit' in item.source %}
+              {# {% if 'you' in item.domain and item.video_id %} #}
                 {% set sourceRowName = item.subreddit|lower() %}
 
                 <tr class='reddit-row post-row {{sourceRowName}}-source'>
 
                   
-                  <td class="col-xs-4 col-md-2 post-item reddit-post" height="100%" id="{{item.video_id}}"></td>
+                  <td class="col-xs-4 col-md-2 post-item reddit-post" height="100%" id="{{item.track_id}}"></td>
 
-                  <td><img src="{{url_for('static', filename='icons/reddit.png')}}" width='40' height='40'><br>
+                  <td class='post-source'><img src="{{url_for('static', filename='icons/reddit.png')}}" width='40' height='40'><br>
                   {{item.subreddit}}</td>
                   
-                  <td class="post-title" id="{{item.video_id}}-title">{{item.title}}</td>
+                  <td class="post-title" id="{{item.track_id}}-title">{{item.raw_title}}</td>
                   {# <a href="{{item.url}}">{{item.title}}</a></td> #}
-                  <td><button type="button" class="btn btn-link save-btn" id="{{item.video_id}}-save">Save</button></td>
+                  <td><button type="button" class="btn btn-link save-btn" id="{{item.track_id}}-save">Save</button></td>
 
                 </tr>
-              {% endif %}
+              {# {% endif %} #}
             {% endif %} 
 
-            {% if 'Resource' in item.__class__.__name__ %}
-              {% set sourceRowName = item.user['username']|replace(' ','-')|lower() %}
+            {% if 'sc' in item.source %}
+              {% set sourceRowName = item.artist|replace(' ','-')|lower() %}
 
                 <tr class="sc-row post-row {{sourceRowName}}-source">
 
                   {# <th scope="row"> #}
-                  <td class="col-xs-2 post-item sc-post" id="{{item.id}}"></td>
+                  <td class="col-xs-2 post-item sc-post" id="{{item.track_id}}"></td>
 
-                  <td><img src="{{url_for('static', filename='icons/soundcloud.png')}}" width='40' height='40'><br>
-                  {{item.user['username']}}</td>
+                  <td class='post-source'><img src="{{url_for('static', filename='icons/soundcloud.png')}}" width='40' height='40'><br>
+                  {{item.artist}}</td>
 
-                  <td class='post-title' id='{{item.id}}-title'>{{item.title}}</td>
-                  <td><button type="button" class="btn btn-link save-btn" id="{{item.id}}-save">Save</button></td>
+                  <td class='post-title' id='{{item.track_id}}-title'>{{item.title}}</td>
+                  <td><button type="button" class="btn btn-link save-btn" id="{{item.track_id}}-save">Save</button></td>
 
                 </tr>
             {% endif %}
@@ -104,37 +104,6 @@ $(function() {
 
     });
 
-
-
-
-  var saveBtns = document.getElementsByClassName('save-btn');
-  Array.from(saveBtns).forEach(function(elem, i) {
-    var trackId = elem.id.split('-save')[0];
-    var rawTitle = document.getElementById(trackId + '-title').innerHTML;
-    console.log(rawTitle + ' -- ' + trackId);
-
-    elem.addEventListener('click', function() {
-      $.ajax({
-        url: $SCRIPT_ROOT + '/save_item',
-        type: 'POST',
-        dataType: 'json',
-        data:{track_id: trackId, raw_title: rawTitle},
-      })
-      .done(function() {
-        console.log('sent ' + trackId)
-        console.log("success");
-      })
-      .fail(function() {
-        console.log("error");
-      })
-      .always(function() {
-        console.log("complete");
-      });
-      
-    });
-  });
-
-
 });
 
 </script>
@@ -144,5 +113,6 @@ $(function() {
 <script src="https://www.youtube.com/iframe_api"></script>
 <script src="https://w.soundcloud.com/player/api.js" type="text/javascript"></script>
 <script src="{{url_for('static', filename='feed.js')}}"></script>
+<script src="{{url_for('static', filename='save.js')}}"></script>
 
 

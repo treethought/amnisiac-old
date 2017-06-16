@@ -1,7 +1,28 @@
-{% extends '_base.html' %}
-{% block content %}
-    {% for item in items %}
-        {{item.track_id}} -- {{item.raw_title}}
-        <br><br>
-    {% endfor %}
-{% endblock %}  
+{% extends "_base.html" %} {% block title %} Favorites {% endblock %} {% block content %}
+<div class="container">
+    <div class="row">
+
+        <div class="col-lg-6">
+            <h1 class='page-title'>{{current_user.username}} :: Favorites</h1>
+        </div>
+    </div>
+</div>
+
+    {% if not items %}
+        <div class="container">
+            <div class="row">
+
+                <div class="col-lg-5">
+                    <h3>
+                        no favorites saved! --__-- <br>
+                    </h3>
+                </div>
+
+            </div>
+        </div>
+
+
+    {% else %}
+        {% include 'main/feed.html' %} 
+    {% endif %}
+    {% endblock %}

@@ -4,14 +4,14 @@
 #################
 #### imports ####
 #################
-import itertools
 
-from flask import render_template, Blueprint, request, session, redirect, url_for, jsonify
+from flask import render_template, Blueprint, request, redirect, url_for, jsonify
 from flask_login import current_user
 
 
 from project.server.main.forms import HomeSearchForm
 from project.server.sources import reddit, sc
+from project.server.sources.utilities import generate_items
 
 ################
 #### config ####
@@ -59,12 +59,10 @@ def results():
     if form.validate_on_submit():
         subreddits = form.reddit_search.data.split(',')
         reddit_posts = reddit.fetch_submissions(subreddits)
-
         sc_artists = form.sc_search.data.split(',')
         sc_tracks = sc.fetch_tracks(sc_artists)
 
-        for i in list(itertools.zip_longest(reddit_posts, sc_tracks)):
-            items.extend(i)
+        items = generate_items(reddit_posts, sc_tracks)
 
     return render_template('main/results.html', items=items)
 

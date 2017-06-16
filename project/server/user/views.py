@@ -8,13 +8,13 @@ from flask import render_template, Blueprint, url_for, \
     redirect, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 
-import itertools
 
 from project.server import bcrypt, db, app
 from project.server.models import User, Feed, Item, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
 from project.server.main.forms import HomeSearchForm, RedditSearchForm
 from project.server.sources import reddit, sc
+from project.server.sources.utilities import generate_items
 
 
 ################
@@ -43,10 +43,7 @@ def dashboard():
     reddit_posts = reddit.fetch_submissions(subs)
     sc_tracks = sc.fetch_tracks(sc_artists)
 
-    items = []
-    for i in list(itertools.zip_longest(reddit_posts, sc_tracks)):
-        items.extend(i)
-
+    items = generate_items(reddit_posts, sc_tracks)
     return render_template('user/dashboard.html', user=current_user, items=items)
 
 
@@ -98,26 +95,9 @@ def add_sources():
     return redirect(url_for('user.manage_sources'))
 
 
-@user_blueprint.route('/remove_sources', methods=['POST'])
-@login_required
-def remove_sources():
-    form = RedditSearchForm(request.form)
-    selected = form.follow_sources.data
-    user = current_user
-    current_feeds = user.feeds
-    for s in selected:
-        feed = get_or_create(db.session, Feed, name=s)
-        try:
-            current_feeds.remove(feed)
-        except ValueError:
-            raise  # or scream: thing not in some_list!
-        except AttributeError:
-            raise  # call security, some_list not quacking like a list!
-
-    user.feeds = current_feeds
-    db.session.add(user)
-    db.session.commit()
-    return redirect(url_for('user.manage_sources'))
+# TODO
+# @user_blueprint.route('/remove_sources', methods=['POST'])
+# @login_required
 
 
 @user_blueprint.route('/save_item', methods=['POST']) # TODO use url params
@@ -125,9 +105,10 @@ def remove_sources():
 def save_item():
     track_id = request.form['track_id']
     raw_title = request.form['raw_title']
+    source = request.form['source']
 
     user = current_user
-    item = get_or_create(db.session, Item, track_id=track_id)
+    item = get_or_create(db.session, Item, track_id=track_id, source=source)
     item.raw_title = raw_title  # title seperate bc title may change with post
 
     if item not in user.favorites:
@@ -160,8 +141,6 @@ def remove_item():
 @user_blueprint.route('/favorites', methods=['GET'])
 @login_required
 def user_favorites():
-    for item in current_user.favorites:
-        pass
     return render_template('user/favorites.html', items=current_user.favorites)
 
 

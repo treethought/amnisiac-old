@@ -24,7 +24,6 @@ associations = db.Table('feeds',
 )
 
 
-
 class User(db.Model):
 
     # __tablename__ = "users"
@@ -37,11 +36,10 @@ class User(db.Model):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     # sources = db.relationship('Source', lazy='dynamic')
     feeds = db.relationship('Feed', secondary=associations,
-        backref=db.backref('subscribed_users', lazy='dynamic'))
+                            backref=db.backref('subscribed_users', lazy='dynamic'))
 
     favorites = db.relationship('Item', secondary=associations,
-        backref=db.backref('users', lazy='dynamic'))
-
+                                backref=db.backref('users', lazy='dynamic'))
 
     def __init__(self, username, password, email=None, admin=False):
         # self.email = email
@@ -52,7 +50,6 @@ class User(db.Model):
 
         self.registered_on = datetime.datetime.now()
         self.admin = admin
-
 
     def is_authenticated(self):
         return True
@@ -76,12 +73,13 @@ class Feed(db.Model):
     url = db.Column(db.String(), unique=True, nullable=False)
     domain = db.Column(db.String(), unique=False, nullable=True)
     items = db.relationship('Item', secondary=associations,
-            backref=db.backref('feeds', lazy='dynamic'))
-
+                            backref=db.backref('feeds', lazy='dynamic'))
 
     def __repr__(self):
         return '<Feed:{} from {}>'.format(self.name, self.domain)
 
+
+# TODO: track_id as primary key? must be string
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     track_id = db.Column(db.String(), unique=True, nullable=False)
@@ -92,19 +90,23 @@ class Item(db.Model):
     domain = db.Column(db.String(), unique=False, nullable=True)
     date_published = db.Column(db.DateTime, nullable=True)
     date_saved = db.Column(db.DateTime, nullable=False)
+    source = db.Column(db.String(), unique=False, nullable=False)
+    subreddit = db.Column(db.String(), unique=False, nullable=True)
 
-    def __init__(self, track_id, raw_title=None):
+    def __init__(self, track_id, source, subreddit=None, **kwargs):
+        super(Item, self).__init__(**kwargs)
 
         self.track_id = track_id
-        self._raw_title = raw_title
+        self.source = source
+        self.subreddit = subreddit
         self.date_saved = datetime.datetime.now()
         # self.parse_raw_title()
 
     def parse_raw_title(self):
         pass
 
-
     def __repr__(self):
         return '<Item:{} from {}'.format(self.raw_title, self.feeds)
+
 
 
