@@ -13,10 +13,8 @@ import itertools
 from project.server import bcrypt, db, app
 from project.server.models import User, Feed, Item, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
-from project.server.reddit.api import build_sources, fetch_submissions
 from project.server.main.forms import HomeSearchForm, RedditSearchForm
-
-from project.server.sc.api import get_user, fetch_tracks
+from project.server.sources import reddit, sc
 
 
 ################
@@ -42,8 +40,8 @@ def dashboard():
         elif feed.domain == 'sc':
             sc_artists.append(feed.name)
 
-    reddit_posts = fetch_submissions(subs)
-    sc_tracks = fetch_tracks(sc_artists)
+    reddit_posts = reddit.fetch_submissions(subs)
+    sc_tracks = sc.fetch_tracks(sc_artists)
 
     items = []
     for i in list(itertools.zip_longest(reddit_posts, sc_tracks)):
@@ -55,7 +53,7 @@ def dashboard():
 @user_blueprint.route('/manage_sources', methods=['GET', 'POST'])
 @login_required
 def manage_sources():
-    new_sources = build_sources()
+    new_sources = reddit.build_sources()
     new = HomeSearchForm()
     new.follow_sources.choices = new_sources
     new.process()
@@ -89,7 +87,7 @@ def add_sources():
 
     for source in filter(None, sc_artists):
         app.logger.debug('adding {} from sc'.format(source))
-        artist = get_user(source)
+        artist = sc.get_user(source)
         name, url = source, artist.permalink_url
         feed = get_or_create(db.session, Feed, name=name, url=url, domain='sc')
         if feed not in user.feeds:

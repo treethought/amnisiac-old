@@ -11,8 +11,7 @@ from flask_login import current_user
 
 
 from project.server.main.forms import HomeSearchForm
-from project.server.reddit import api as reddit
-from project.server.sc import api as sc
+from project.server.sources import reddit, sc
 
 ################
 #### config ####

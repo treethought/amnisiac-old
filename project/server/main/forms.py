@@ -1,9 +1,9 @@
 # project/server/main/forms
 
 from flask_wtf import Form
-from wtforms import TextField, TextAreaField, SelectMultipleField, widgets
+from wtforms import TextField, SelectMultipleField, widgets
 from wtforms.validators import DataRequired, Optional
-from project.server.reddit.api import wiki_subs
+
 
 class MultiCheckboxField(SelectMultipleField):
     widget = widgets.ListWidget(prefix_label=False)

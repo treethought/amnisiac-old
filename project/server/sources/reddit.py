@@ -6,7 +6,7 @@ import praw
 from bs4 import BeautifulSoup as bs
 
 
-from project.server.reddit.video_ids import get_video_id
+from project.server.sources.video_ids import get_video_id
 from project.server import app
 # Type Annotations #
 from typing import List, Iterable
