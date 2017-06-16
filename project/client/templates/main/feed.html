@@ -42,7 +42,7 @@
 
             {% if 'reddit' in item.source %}
               {# {% if 'you' in item.domain and item.video_id %} #}
-                {% set sourceRowName = item.subreddit|lower() %}
+                {% set sourceRowName = item.subreddit|replace('r/', '')|lower() %}
 
                 <tr class='reddit-row post-row {{sourceRowName}}-source'>
 
