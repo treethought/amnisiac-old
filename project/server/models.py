@@ -17,10 +17,13 @@ def get_or_create(session, model, **kwargs):
         return instance
 
 
-feeds = db.Table('feeds',
+associations = db.Table('feeds',
     db.Column('feed_id', db.Integer, db.ForeignKey('feed.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id'))
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('item_id', db.Integer, db.ForeignKey('item.id'))
 )
+
+
 
 class User(db.Model):
 
@@ -33,7 +36,10 @@ class User(db.Model):
     registered_on = db.Column(db.DateTime, nullable=False)
     admin = db.Column(db.Boolean, nullable=False, default=False)
     # sources = db.relationship('Source', lazy='dynamic')
-    feeds = db.relationship('Feed', secondary=feeds,
+    feeds = db.relationship('Feed', secondary=associations,
+        backref=db.backref('subscribed_users', lazy='dynamic'))
+
+    favorites = db.relationship('Item', secondary=associations,
         backref=db.backref('users', lazy='dynamic'))
 
 
@@ -61,7 +67,7 @@ class User(db.Model):
         return self.id
 
     def __repr__(self):
-        return '<User {0}>'.format(self.email)
+        return '<User {0}>'.format(self.username)
 
 
 class Feed(db.Model):
@@ -69,7 +75,36 @@ class Feed(db.Model):
     name = db.Column(db.Text)
     url = db.Column(db.String(), unique=True, nullable=False)
     domain = db.Column(db.String(), unique=False, nullable=True)
+    items = db.relationship('Item', secondary=associations,
+            backref=db.backref('feeds', lazy='dynamic'))
 
 
     def __repr__(self):
         return '<Feed:{} from {}>'.format(self.name, self.domain)
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    track_id = db.Column(db.String(), unique=True, nullable=False)
+    raw_title = db.Column(db.String(), unique=False, nullable=True)
+    title = db.Column(db.String(), unique=False, nullable=True)
+    artist = db.Column(db.String(), unique=False, nullable=True)
+    url = db.Column(db.String(), unique=False, nullable=True)
+    domain = db.Column(db.String(), unique=False, nullable=True)
+    date_published = db.Column(db.DateTime, nullable=True)
+    date_saved = db.Column(db.DateTime, nullable=False)
+
+    def __init__(self, track_id, raw_title=None):
+
+        self.track_id = track_id
+        self._raw_title = raw_title
+        self.date_saved = datetime.datetime.now()
+        # self.parse_raw_title()
+
+    def parse_raw_title(self):
+        pass
+
+
+    def __repr__(self):
+        return '<Item:{} from {}'.format(self.raw_title, self.feeds)
+
+

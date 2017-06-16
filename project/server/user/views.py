@@ -5,17 +5,16 @@
 #################
 
 from flask import render_template, Blueprint, url_for, \
-    redirect, flash, request
+    redirect, flash, request, jsonify
 from flask_login import login_user, logout_user, login_required, current_user
 
 import itertools
 
 from project.server import bcrypt, db, app
-from project.server.models import User, Feed, get_or_create
+from project.server.models import User, Feed, Item, get_or_create
 from project.server.user.forms import LoginForm, RegisterForm
 from project.server.reddit.api import build_sources, fetch_submissions
-from project.server.reddit.forms import RedditSearchForm
-from project.server.main.forms import HomeSearchForm
+from project.server.main.forms import HomeSearchForm, RedditSearchForm
 
 from project.server.sc.api import get_user, fetch_tracks
 
@@ -83,7 +82,8 @@ def add_sources():
     for source in filter(None, reddits):
         app.logger.debug('adding {} from reddit'.format(source))
         name, url = source, 'http://reddit.com' + source
-        feed = get_or_create(db.session, Feed, name=name, url=url, domain='reddit')
+        feed = get_or_create(db.session, Feed, name=name,
+                             url=url, domain='reddit')
         if feed not in current_user.feeds:
             user.feeds.append(feed)
 
@@ -120,6 +120,51 @@ def remove_sources():
     db.session.add(user)
     db.session.commit()
     return redirect(url_for('user.manage_sources'))
+
+
+@user_blueprint.route('/save_item', methods=['POST']) # TODO use url params
+@login_required
+def save_item():
+    track_id = request.form['track_id']
+    raw_title = request.form['raw_title']
+
+    user = current_user
+    item = get_or_create(db.session, Item, track_id=track_id)
+    item.raw_title = raw_title  # title seperate bc title may change with post
+
+    if item not in user.favorites:
+        # app.logger.debug('Adding item {} to {} favorites'.format(item, user))
+        user.favorites.append(item)
+    db.session.add(item)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify('saved item {}'.format(track_id))
+
+@user_blueprint.route('/remove_item', methods=['POST']) # TODO use url params
+@login_required
+def remove_item():
+    track_id = request.form['track_id']
+    raw_title = request.form['raw_title']
+
+    user = current_user
+    item = get_or_create(db.session, Item, track_id=track_id)
+    item.raw_title = raw_title  # title seperate bc title may change with post
+
+    if item in user.favorites:
+        # app.logger.debug('Adding item {} to {} favorites'.format(item, user))
+        user.favorites.remove(item)
+    db.session.add(item)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify('saved item {}'.format(track_id))
+
+
+@user_blueprint.route('/favorites', methods=['GET'])
+@login_required
+def user_favorites():
+    for item in current_user.favorites:
+        pass
+    return render_template('user/favorites.html', items=current_user.favorites)
 
 
 @user_blueprint.route('/register', methods=['GET', 'POST'])

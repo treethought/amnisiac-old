@@ -52,8 +52,9 @@
                   <td><img src="{{url_for('static', filename='icons/reddit.png')}}" width='40' height='40'><br>
                   {{item.subreddit}}</td>
                   
-                  <td class="post-title" id="{{item.video_id}}-title">
-                  <a href="{{item.url}}">{{item.title}}</a></td>
+                  <td class="post-title" id="{{item.video_id}}-title">{{item.title}}</td>
+                  {# <a href="{{item.url}}">{{item.title}}</a></td> #}
+                  <td><button type="button" class="btn btn-link save-btn" id="{{item.video_id}}-save">Save</button></td>
 
                 </tr>
               {% endif %}
@@ -70,7 +71,8 @@
                   <td><img src="{{url_for('static', filename='icons/soundcloud.png')}}" width='40' height='40'><br>
                   {{item.user['username']}}</td>
 
-                  <td>{{item.title}}</td>
+                  <td class='post-title' id='{{item.id}}-title'>{{item.title}}</td>
+                  <td><button type="button" class="btn btn-link save-btn" id="{{item.id}}-save">Save</button></td>
 
                 </tr>
             {% endif %}
@@ -101,6 +103,38 @@ $(function() {
         }
 
     });
+
+
+
+
+  var saveBtns = document.getElementsByClassName('save-btn');
+  Array.from(saveBtns).forEach(function(elem, i) {
+    var trackId = elem.id.split('-save')[0];
+    var rawTitle = document.getElementById(trackId + '-title').innerHTML;
+    console.log(rawTitle + ' -- ' + trackId);
+
+    elem.addEventListener('click', function() {
+      $.ajax({
+        url: $SCRIPT_ROOT + '/save_item',
+        type: 'POST',
+        dataType: 'json',
+        data:{track_id: trackId, raw_title: rawTitle},
+      })
+      .done(function() {
+        console.log('sent ' + trackId)
+        console.log("success");
+      })
+      .fail(function() {
+        console.log("error");
+      })
+      .always(function() {
+        console.log("complete");
+      });
+      
+    });
+  });
+
+
 });
 
 </script>

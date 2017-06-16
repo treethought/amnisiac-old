@@ -1,0 +1,7 @@
+{% extends '_base.html' %}
+{% block content %}
+    {% for item in items %}
+        {{item.track_id}} -- {{item.raw_title}}
+        <br><br>
+    {% endfor %}
+{% endblock %}  
