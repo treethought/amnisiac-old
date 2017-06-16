@@ -95,9 +95,26 @@ def add_sources():
     return redirect(url_for('user.manage_sources'))
 
 
-# TODO
-# @user_blueprint.route('/remove_sources', methods=['POST'])
-# @login_required
+@user_blueprint.route('/remove_sources', methods=['POST'])
+@login_required
+def remove_sources():
+    form = RedditSearchForm(request.form)
+    selected = form.follow_sources.data
+    user = current_user
+    current_feeds = user.feeds
+    for s in selected:
+        feed = get_or_create(db.session, Feed, name=s)
+        try:
+            current_feeds.remove(feed)
+        except ValueError:
+            raise  # or scream: thing not in some_list!
+        except AttributeError:
+            raise  # call security, some_list not quacking like a list!
+
+    user.feeds = current_feeds
+    db.session.add(user)
+    db.session.commit()
+    return redirect(url_for('user.manage_sources'))
 
 
 @user_blueprint.route('/save_item', methods=['POST']) # TODO use url params
@@ -119,23 +136,11 @@ def save_item():
     db.session.commit()
     return jsonify('saved item {}'.format(track_id))
 
-@user_blueprint.route('/remove_item', methods=['POST']) # TODO use url params
-@login_required
-def remove_item():
-    track_id = request.form['track_id']
-    raw_title = request.form['raw_title']
+# TODO
+# @user_blueprint.route('/remove_item', methods=['POST']) # TODO use url params
+# @login_required
+# def remove_item():
 
-    user = current_user
-    item = get_or_create(db.session, Item, track_id=track_id)
-    item.raw_title = raw_title  # title seperate bc title may change with post
-
-    if item in user.favorites:
-        # app.logger.debug('Adding item {} to {} favorites'.format(item, user))
-        user.favorites.remove(item)
-    db.session.add(item)
-    db.session.add(user)
-    db.session.commit()
-    return jsonify('saved item {}'.format(track_id))
 
 
 @user_blueprint.route('/favorites', methods=['GET'])
