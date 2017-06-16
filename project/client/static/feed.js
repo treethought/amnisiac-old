@@ -122,7 +122,7 @@ var renderYT = function makePlayer(elem, i) {
                 e.target.setPlaybackQuality("medium");
                 console.log('new video is ready');
                 e.target.playVideo();
-                $('div.html5-video-container > video').click()
+
                 toggleButon(true, i);
 
             },
