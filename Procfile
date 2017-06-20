@@ -1,1 +1,1 @@
-web: gunicorn project.server:app
+web: gunicorn amnisiac.app:create_app\(\) -b 0.0.0.0:$PORT -w 3
