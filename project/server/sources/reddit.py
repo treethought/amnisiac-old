@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup as bs
 from project.server.sources.video_ids import get_video_id
 from project.server import app
 # Type Annotations #
-from typing import List, Iterable
+# from typing import List, Iterable
 from praw.models import Submission
 
 # script
@@ -20,14 +20,14 @@ reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),
                      username=os.getenv('REDDIT_USERNAME'))
 
 
-def fetch_submissions(subreddits: List[str]) -> List[Submission]:
+def fetch_submissions(subreddits):
     sub_query = ''
     for sub in subreddits:
         sub_query += sub.strip(',').strip('/r/').strip('+') + '+'
     return hot_posts(sub_query)
 
 
-def build_sources() -> List[tuple]:
+def build_sources():
     subs = wiki_subs('music', 'musicsubreddits')
     sub_names = []
     for s in subs:
@@ -37,7 +37,7 @@ def build_sources() -> List[tuple]:
     return sub_names
 
 
-def hot_posts(sub: str) -> List[Submission]:
+def hot_posts(sub):
     result = []
     print('fetchin {} subreddit'.format(sub))
 
@@ -70,7 +70,7 @@ def get_audio(post_url):
         pass
 
 
-def wiki_subs(sub: str, wiki_name: str) -> Iterable[str]:
+def wiki_subs(sub, wiki_name):
     wiki = reddit.subreddit(sub).wiki[wiki_name]
     html = markdown(wiki.content_md)
     subs = bs(html, 'html.parser').select('li')

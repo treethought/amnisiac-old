@@ -5,7 +5,7 @@ import soundcloud
 
 
 # type annotations
-from typing import Iterable, List, Dict
+# from typing import Iterable, List, Dict
 from soundcloud.resource import Resource
 
 
@@ -14,7 +14,7 @@ client = soundcloud.Client(
     client_secret=os.getenv('SOUNDCLOUD_CLIENT_ID'))
 
 
-def fetch_tracks(artists: List[str]) ->Iterable[Dict]:
+def fetch_tracks(artists):
     """ Generator yielding the internal dicts of track resources """
     for q in [q for q in artists if len(q) > 1]:
         artist = get_user(q.strip())
@@ -22,20 +22,20 @@ def fetch_tracks(artists: List[str]) ->Iterable[Dict]:
             track_data = {'id': track.id, 'title': track.title, 'stream': track.stream_url}
             yield track
 
-def search_user(name: str) -> Iterable[Resource]:
+def search_user(name):
     """Generator yielding Resource objects from search results"""
     results = client.get('/users', q=name, limit=10)
     for a in results:
         yield a
 
 
-def get_user(name: str) -> Resource:
+def get_user(name):
     for user in search_user(name):
         if user.username.lower().strip() == name.lower().strip():
             return user
 
 
-def user_tracks(user: Resource, limit=None) -> Iterable[Resource]:
+def user_tracks(user, limit=None):
     try:
         endpoint = '/users/{}/tracks'.format(user.id)
         for track in client.get(endpoint):
@@ -45,7 +45,7 @@ def user_tracks(user: Resource, limit=None) -> Iterable[Resource]:
         return []
 
 
-def embed_info(url: str) -> str:
+def embed_info(url):
     return client.get('/oembed', url=url).html
 
 
