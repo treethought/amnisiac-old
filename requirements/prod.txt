@@ -8,6 +8,9 @@ Jinja2==2.9.6
 itsdangerous==0.24
 click>=5.0
 
+# Admin
+Flask-Admin==1.5.0
+
 # Database
 Flask-SQLAlchemy==2.2
 psycopg2==2.7.1
