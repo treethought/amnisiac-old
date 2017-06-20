@@ -1,0 +1,6 @@
+{
+    "name": "youtube-iframe-api",
+    "description": "YouTube iframe api for bower", 
+    "version": "0.0.1",
+    "main": "youtube.iframe-api.js"
+}

@@ -53,6 +53,6 @@
 
 </form>
 
-{# {% set sc_autocomplete="{{url_for('sc.autocomplete')}}" %} #}
-
-<script src="{{url_for('static', filename='search.js')}}"></script>
+{% assets "js_search" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+{% endassets %}

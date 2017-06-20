@@ -1,0 +1,13 @@
+{
+  "name": "api",
+  "_cacheHeaders": {
+    "ETag": "W/\"1297-3917880241\"",
+    "Last-Modified": "Thu, 08 Jun 2017 19:32:22 GMT",
+    "Content-Type": "application/javascript"
+  },
+  "_release": "e-tag:W/\"1297-39",
+  "main": "index.js",
+  "_source": "https://w.soundcloud.com/player/api.js",
+  "_target": "*",
+  "_originalSource": "https://w.soundcloud.com/player/api.js"
+}
