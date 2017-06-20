@@ -1,0 +1,16 @@
+{
+  "name": "youtube-iframe-api",
+  "description": "YouTube iframe api for bower",
+  "version": "0.0.1",
+  "main": "youtube.iframe-api.js",
+  "homepage": "https://github.com/homerjam/youtube-iframe-api",
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "79cd27b02dba8cec9751c6ecdd1f803312645eb2"
+  },
+  "_source": "https://github.com/homerjam/youtube-iframe-api.git",
+  "_target": "^0.0.1",
+  "_originalSource": "youtube-iframe-api"
+}
