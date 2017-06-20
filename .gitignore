@@ -54,6 +54,3 @@ docs/_build/
 
 # PyBuilder
 target/
-
-dev-env
-project/__init__.py
