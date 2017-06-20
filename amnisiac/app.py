@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """The app module, containing the app factory function."""
 from flask import Flask, render_template
-from flask_admin.contrib.sqla import ModelView
+
 
 from amnisiac import commands, main, user
 from amnisiac.assets import assets
 from amnisiac.extensions import admin, bcrypt, bootstrap, db, debug_toolbar, login_manager, migrate # , cach, csrf_protect
 from amnisiac.settings import ProdConfig
 from amnisiac.models import User, Feed, Item
+from amnisiac.utils import AdminModelView
 
 
 def create_app(config_object=ProdConfig):
@@ -27,9 +28,9 @@ def create_app(config_object=ProdConfig):
 
 def register_admin(app):
     admin.init_app(app)
-    admin.add_view(ModelView(Feed, db.session))
-    admin.add_view(ModelView(Item, db.session))
-    admin.add_view(ModelView(User, db.session, endpoint='user_admin'))
+    admin.add_view(AdminModelView(Feed, db.session))
+    admin.add_view(AdminModelView(Item, db.session))
+    admin.add_view(AdminModelView(User, db.session, endpoint='user_admin'))
 
 def register_extensions(app):
     """Register Flask extensions."""
