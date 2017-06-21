@@ -3,6 +3,10 @@
 font-family: 'Comfortaa', cursive;
 font-family: 'Kreon', serif;*/
 
+.jumbotron {
+  background-color: white;
+}
+
 .site-content {
   padding-top: 75px;
   color: black;

@@ -7,16 +7,29 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <!-- styles -->
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa:400,700|Gloria+Hallelujah|Kreon:400,700" rel="stylesheet">
+
+
     <link href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.1/yeti/bootstrap.min.css" rel="stylesheet" media="screen">
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+
+<!--     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.full.js"></script>
-    <link href="{{url_for('static', filename='main.css')}}" rel="stylesheet" media="screen"> {% block css %}{% endblock %}
-    <link href="https://fonts.googleapis.com/css?family=Comfortaa:400,700|Gloria+Hallelujah|Kreon:400,700" rel="stylesheet">
+    <link href="{{url_for('static', filename='main.css')}}" rel="stylesheet" media="screen"> 
+ #}    {# {% block css %}{% endblock %} #}
+ -->
 
+
+{% assets "css_all" %}
+    <link rel="stylesheet" href="{{ ASSET_URL }}">
+  {% endassets %}
+
+  {% block css %}{% endblock %}
 
     {# FAVICON #}
     <link href="https://d30y9cdsu7xlg0.cloudfront.net/png/175419-200.png">
@@ -71,10 +84,12 @@
     <script type=text/javascript>
       $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="{{url_for('static', filename='main.js')}}" type="text/javascript"></script>
-    {% block js %}{% endblock %}
 
+    {% assets "js_common" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+    {% block js %}{% endblock %}
+z
 </body>
 
 </html>
