@@ -51,6 +51,14 @@ var highlightRow = function(elem, i) {
 
 }
 
+var showPlaying = function(elem, i) {
+    console.log('Showing now playing');
+    var title = document.getElementById(elem.id + '-title').innerText;
+    document.title = title
+    document.getElementById('now-playing-title').innerHTML = title;
+    // document.getElementById('now-playing-source').href = // TODO
+}
+
 var toggleButon = function(playing, i) {
     var iconSource = playing ? "IDzX9gL.png" : "quyUPXN.png"; // if playing set pause symbol, else set play symbol
 
@@ -97,6 +105,7 @@ Array.from(postItems).forEach(function(elem, i) {
 
     icon.addEventListener('click', function() {
         highlightRow(elem, i);
+        showPlaying(elem, i);
     })
 
 
