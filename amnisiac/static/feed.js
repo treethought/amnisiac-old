@@ -1,6 +1,38 @@
 // Feed Table 
-
+$(document).ready(function() {
+    
 var postItems = document.getElementsByClassName('post-item');
+
+// Hide and show video player
+var btn = $('#toggle-player');
+    var display = $('#now-playing-display');
+    btn.hide();
+    display.hide();
+    btn.click(function() {
+        display.toggle();
+        if (display.is(':visible')) {
+            btn.text('hide video player')
+        } else {
+            btn.text('show video player')
+        }
+
+    });
+
+// Filter the feed
+var feedToggles = $('.toggle-filter');
+Array.from(feedToggles).forEach(function(elem, id) {
+
+    elem.addEventListener('click', function() {
+
+        var rowClassName = elem.name.replace('toggle-', '').replace('/r/', '');
+        console.log('Filtering ' + rowClassName);
+
+        var rowClass = '.' + rowClassName + '-source';
+        $(rowClass).toggle();
+
+    })
+
+})
 
 
 var removeHighights = function() {
@@ -159,9 +191,14 @@ function clickYT(elem, i) {
         console.log('created first yt player with:' + elem.id);
 
     } else {
-        console.log('clicked while iframe exists')
+        console.log('clicked while iframe exists');
+        console.log(player.videoId);
 
-        if (player.a.src.toString().includes(elem.id)) {
+        var currentId = player.getVideoData()['video_id'];
+        console.log(currentId);
+
+        if (currentId === elem.id) {
+
             console.log('Clicked current item');
             console.log(player.getPlayerState());
 
@@ -322,3 +359,5 @@ var clickSC = function(elem, i) {
 
     }
 }
+
+});

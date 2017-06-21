@@ -8,6 +8,8 @@
     </div>
 </div>
 
+ <hr>
+
     {% if not user.feeds %}
         <div class="container">
             <div class="row">
@@ -26,6 +28,7 @@
 
 
     {% else %}
+   
         <div class="row">
             <div class="col-lg-3">
                 <h4><a href="{{ url_for('user.manage_sources') }}">Manage Feeds</a></h4>
@@ -57,26 +60,6 @@
 
 
     {% endif %}
-
-
-    
-<script type="text/javascript">
-    var feedToggles = $('.toggle-filter');
-    Array.from(feedToggles).forEach(function(elem, id) {
-
-        elem.addEventListener('click', function() {
-
-            var rowClassName = elem.name.replace('toggle-', '').replace('/r/', '');
-            console.log('Filtering ' + rowClassName);
-
-            var rowClass = '.' + rowClassName + '-source';
-            $(rowClass).toggle();
-
-        })
-
-    })
-</script>
-
 
 
 {% if user.feeds %}

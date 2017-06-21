@@ -1,3 +1,4 @@
+<hr>
 <div class="container-fluid" id="now-playing-display">
     <div class="row">
 
@@ -21,6 +22,7 @@
 
 <div><button type="button" class="btn btn-link" id='toggle-player' data-toggle="button" aria-pressed="false" autocomplete="off">Hide Player</button> </div>
 
+<hr>
 
 
 <div class="container-fluid feed-list col-md-8">
@@ -86,30 +88,5 @@
 
 </div>
 
-
-<script type="text/javascript">
-$(function() {
-
-    var btn = $('#toggle-player');
-    var display = $('#now-playing-display');
-    btn.hide();
-    display.hide();
-    btn.click(function() {
-        display.toggle();
-        if (display.is(':visible')) {
-            btn.text('hide video player')
-        } else {
-            btn.text('show video player')
-        }
-
-    });
-
-});
-
-</script>
-
-{% assets "js_feed" %}
-    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-{% endassets %}
 
 
