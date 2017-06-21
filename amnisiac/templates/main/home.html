@@ -5,14 +5,12 @@
             <h1 class="display-3">amnisiac</h1><img src="/static/icons/mtn-stream.png">
             <p class="lead">Discover new music by subscribing to subreddits and soundcloud users</p>
             <hr class="m-y-md">
-            <div class="container col-xs-6">
+        </div>
+
+        <div class="container-fluid col-xs-6">
                 {% set action=url_for('main.results') %}
                 {% set btn_label='Listen' %}
                 {% include 'main/search_form.html' %}
-            </div>
-{#             <p class="lead">
-                <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
-            </p> #}
         </div>
 
 
