@@ -6,7 +6,7 @@ css_all = Bundle(
     'libs/bootstrap/dist/css/bootstrap.min.css',
     'libs/jquery-ui/themes/smoothness/jquery-ui.css',
     'libs/select2/dist/css/select2.min.css',
-    'main.css',
+    'css/main.css',
     filters='cssmin',
     output='public/css/common.css'
 )
@@ -16,11 +16,11 @@ js_common = Bundle(
     'libs/jquery-ui/jquery-ui.min.js',
     'libs/bootstrap/dist/js/bootstrap.min.js',
     "libs/select2/dist/js/select2.full.js",
-    'search.js',
     'libs/youtube-iframe-api/youtube.iframe-api.js',
     'libs/api/index.js',
-    'feed.js',
-    'save.js',
+    'js/search.js',
+    'js/feed.js',
+    'js/save.js',
     filters='jsmin',
     output='public/js/common.js'
 )
