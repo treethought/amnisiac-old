@@ -38,6 +38,8 @@
 
 
 {% if user.feeds %}
+    {% set feeds = user.feeds %}
     {% include 'main/feed.html' %} 
+    }
 {% endif %}
 {% endblock %}

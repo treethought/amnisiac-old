@@ -10,7 +10,7 @@
             <h3>Showing Items From</h3>
           </div>
         </div>
-        {% for feed in user.feeds %}
+        {% for feed in feeds %}
         {% set sourceRowName = feed.name|replace(' ', '-')|lower() %}
           <div class="row">
               <div class="col-xs">
@@ -36,6 +36,9 @@
             </p>
           <hr class="m-y-md">
           {# <p id='now-playing-title'></p> #}
+          <p class="lead">
+            <a class="btn btn-primary btn-lg" id='now-playing-source' href="#" role="button">View Source</a>
+          </p>
           <p class="lead">
             <a class="btn btn-primary btn-lg" id='now-playing-source' href="#" role="button">View Source</a>
           </p>
