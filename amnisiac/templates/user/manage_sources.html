@@ -1,4 +1,8 @@
-{% extends "_base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block content %} {{ current_user.email }}
+{% extends "_base.html" %} {% import "bootstrap/wtf.html" as wtf %} {% block content %} 
+
+<h1>{% block title %}Manage Sources{% endblock %}</h1>
+<hr><br>
+ <h4><a href="{{ url_for('user.dashboard') }}">Back to Dashboard</a></h3>
 
 
 
