@@ -34,31 +34,6 @@
                 <h4><a href="{{ url_for('user.manage_sources') }}">Manage Feeds</a></h4>
             </div>
         </div>
-
-        <div class="container-fluid feed-selection">
-            <div class="row">
-
-                <div class="col-md-2">
-                    <h3>Your Feeds:</h3>
-                </div>
-
-            </div>
-
-            <div class="row">
-                <div class="col-md-6">
-                        
-                    {% for feed in user.feeds %} {% set sourceRowName = feed.name|replace(' ', '-')|lower() %}
-                        <button type="button" name="toggle-{{sourceRowName}}" class="btn btn-primary toggle-filter" data-toggle="button" aria-pressed="false">{{feed.name}}</button>
-
-                    {% endfor %}<br><br>
-
-                </div>
-            </div>
-
-        </div>
-
-
-
     {% endif %}
 
 
