@@ -12,13 +12,39 @@ var playStatus = false;
 
 
 playBtn.addEventListener('click', function() {
-
     if (!currentId) {
         postItems[0].click();
     }
     else {
         document.getElementById(currentId).click();
     }
+})
+
+nextBtn.addEventListener('click', function() {
+
+    startNext(currentIndex); // TODO - conditions
+
+})
+
+backBtn.addEventListener('click', function() {
+
+    switch (currentIndex) {
+        case 1:
+             document.getElementById('post-icon-0').click();
+            break;
+        case 0:
+            break;
+        default:
+            startNext(currentIndex - 2);
+            break;
+    }
+
+    if (currentIndex == 1) {
+        document.getElementById('post-icon-0').click(); // TODO - conditions
+    }
+
+
+    
 
 })
 
@@ -85,8 +111,8 @@ var showPlaying = function(elem, i) {
 
 var toggleButon = function(playing, i) {
     var iconSource = playing ? "IDzX9gL.png" : "quyUPXN.png"; // if playing set pause symbol, else set play symbol
-    var playIcon = playBtn.childNodes
-    [0];
+    var playIcon = playBtn.childNodes[0];
+    playStatus = playing;
 
     if (playing) {
         playIcon.classList.remove('glyphicon-play');
@@ -138,14 +164,17 @@ Array.from(postItems).forEach(function(elem, i) {
     elem.appendChild(icon);
 
     icon.addEventListener('click', function() {
-        highlightRow(elem, i);
-        showPlaying(elem, i);
+        // used to start item based on index rather than elem ID
+        elem.click();
     })
 
 
     elem.addEventListener('click', function() {
         console.log('clicked post ' + i);
+        highlightRow(elem, i);
+        showPlaying(elem, i);
         currentId = elem.id;
+        currentIndex = i;
 
 
         // highlightRow(i);
