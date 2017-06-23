@@ -1,4 +1,3 @@
-var saveBtns = document.getElementsByClassName('save-btn');
 
 Array.from(saveBtns).forEach(function(elem, i) {
     var postRow = elem.parentElement.parentElement
@@ -16,13 +15,26 @@ Array.from(saveBtns).forEach(function(elem, i) {
     console.log(rawTitle + ' -- ' + trackId);
 
     elem.addEventListener('click', function() {
+      var star = elem.childNodes[0];
       $.ajax({
         url: $SCRIPT_ROOT + '/save_item',
         type: 'POST',
         dataType: 'json',
         data:{track_id: trackId, raw_title: rawTitle, source: trackSource},
       })
-      .done(function() {
+      .done(function(response) {
+        console.log(response);
+        if (response === false) {
+          console.log('Removing from favorites');
+          elem.classList.remove('glyphicon-star');
+          elem.classList.add('glyphicon-star-empty');
+        }
+        else {
+          console.log('Adding to favorites');
+          elem.classList.remove('glyphicon-star-empty');
+          elem.classList.add('glyphicon-star');
+        }
+
         console.log('sent ' + trackId)
         console.log("success");
       })

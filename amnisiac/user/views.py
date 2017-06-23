@@ -127,12 +127,18 @@ def save_item():
     item = get_or_create(db.session, Item, track_id=track_id, source=source)
     item.raw_title = raw_title  # title seperate bc title may change with post
 
-    if item not in user.favorites:
-        user.favorites.append(item)
+    if item in user.favorites:
+        user.favorites.remove(item)
+        db.session.add(item)
+        db.session.add(user)
+        db.session.commit()
+        return jsonify(False)
+
+    user.favorites.append(item)
     db.session.add(item)
     db.session.add(user)
     db.session.commit()
-    return jsonify('saved item {}'.format(track_id))
+    return jsonify(True)
 
 # TODO
 # @user_blueprint.route('/remove_item', methods=['POST']) # TODO use url params

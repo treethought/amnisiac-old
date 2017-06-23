@@ -17,23 +17,23 @@
           <div class="row">
             <div class="col-xs" id="source-list">
                 <table class="table table-invert" id='source-table'>
-              <thead class='thead-default'>
-                <tr>
-                    <div class="col-lg-5">
-                        <div id='nav'></div>
-                    </div>
-                </tr>
-                <tr>
-                    <th>{{form.follow_sources.label}}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for subfield in form.follow_sources %}
-                <tr>
-                    <td>{{subfield}}{{subfield.data}}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
+                  <thead class='thead-default'>
+                    <tr>
+                        <div class="col-lg-5">
+                            <div id='nav'></div>
+                        </div>
+                    </tr>
+                    <tr>
+                        <th>{{form.follow_sources.label}}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for subfield in form.follow_sources %}
+                    <tr>
+                        <td>{{subfield}}{{subfield.data}}</td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
                 </table>
             </div>
           </div>
