@@ -3,6 +3,11 @@
 font-family: 'Comfortaa', cursive;
 font-family: 'Kreon', serif;*/
 
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
 .jumbotron {
   background-color: white;
 }

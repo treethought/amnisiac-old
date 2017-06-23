@@ -37,7 +37,7 @@
             <ul class="nav navbar-nav">
               {% for feed in feeds %}
               {% set sourceRowName = feed.name|replace(' ', '-')|lower() %}
-                <li class="nav-item col-xs-4">
+                <li class="nav-item col-xs-5 col-md-4 nopadding">
                   <button type="button" name="toggle-{{sourceRowName}}" class="btn btn-primary btn-block navbar-btn toggle-filter" data-toggle="button" aria-pressed="false">{{feed.name}}</button>
                  </li>
               {% endfor %}
