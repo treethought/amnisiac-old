@@ -23,6 +23,9 @@
 
 
     {% else %}
+        {% if current_user.feeds %}
+        {% set feeds = current_user.feeds %}
         {% include 'main/feed.html' %} 
+        {% endif %} 
     {% endif %}
     {% endblock %}
