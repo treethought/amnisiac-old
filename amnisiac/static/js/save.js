@@ -1,3 +1,6 @@
+var saveBtns = document.getElementsByClassName('save-btn');
+var title = document.getElementsByTagName("title")[0].innerHTML
+console.log('Title is ' + title)
 
 Array.from(saveBtns).forEach(function(elem, i) {
     var postRow = elem.parentElement.parentElement
@@ -28,11 +31,20 @@ Array.from(saveBtns).forEach(function(elem, i) {
           console.log('Removing from favorites');
           elem.classList.remove('glyphicon-star');
           elem.classList.add('glyphicon-star-empty');
+
+
+          if (title.indexOf("Favorites") != -1) {
+            console.log('strikig')
+            postRow.style.textDecoration = 'line-through';
+          }
+
         }
         else {
           console.log('Adding to favorites');
           elem.classList.remove('glyphicon-star-empty');
           elem.classList.add('glyphicon-star');
+          postRow.style.textDecoration = ''
+
         }
 
         console.log('sent ' + trackId)

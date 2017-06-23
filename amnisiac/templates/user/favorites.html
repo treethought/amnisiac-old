@@ -25,6 +25,7 @@
     {% else %}
         {% if current_user.feeds %}
         {% set feeds = current_user.feeds %}
+        {% set favorite_page = True %}
         {% include 'main/feed.html' %} 
         {% endif %} 
     {% endif %}
