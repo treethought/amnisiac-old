@@ -2,6 +2,27 @@
 $(document).ready(function() {
     
 var postItems = document.getElementsByClassName('post-item');
+var backBtn = document.getElementById('back-button');
+var playBtn = document.getElementById('play-button');
+var nextBtn = document.getElementById('next-button');
+
+var currentIndex = 0;
+var currentId = null;
+var playStatus = false;
+
+
+playBtn.addEventListener('click', function() {
+
+    if (!currentId) {
+        postItems[0].click();
+    }
+    else {
+        document.getElementById(currentId).click();
+    }
+
+})
+
+
 
 // Hide and show video player
 var btn = $('#toggle-player');
@@ -35,6 +56,9 @@ Array.from(feedToggles).forEach(function(elem, id) {
 })
 
 
+
+
+
 var removeHighights = function() {
     console.log('removing highlights');
     for (var i = postItems.length - 1; i >= 0; i--) {
@@ -61,9 +85,19 @@ var showPlaying = function(elem, i) {
 
 var toggleButon = function(playing, i) {
     var iconSource = playing ? "IDzX9gL.png" : "quyUPXN.png"; // if playing set pause symbol, else set play symbol
+    var playIcon = playBtn.childNodes
+    [0];
+
+    if (playing) {
+        playIcon.classList.remove('glyphicon-play');
+        playIcon.classList.add('glyphicon-pause');
+    }
+    else {
+        playIcon.classList.remove('glyphicon-pause');
+        playIcon.classList.add('glyphicon-play');
+    }
 
     icon = document.getElementById("post-icon-" + i);
-
     icon.setAttribute("src", "https://i.imgur.com/" + iconSource);
 };
 
@@ -111,6 +145,8 @@ Array.from(postItems).forEach(function(elem, i) {
 
     elem.addEventListener('click', function() {
         console.log('clicked post ' + i);
+        currentId = elem.id;
+
 
         // highlightRow(i);
 
@@ -203,7 +239,7 @@ function clickYT(elem, i) {
         console.log('clicked while iframe exists');
         console.log(player.videoId);
 
-        var currentId = player.getVideoData()['video_id'];
+        currentId = player.getVideoData()['video_id'];
         console.log(currentId);
 
         if (currentId === elem.id) {

@@ -3,6 +3,11 @@
 font-family: 'Comfortaa', cursive;
 font-family: 'Kreon', serif;*/
 
+
+span.glyphicon {
+    font-size: 1.2em;
+}
+
 .nopadding {
    padding: 0 !important;
    margin: 0 !important;
