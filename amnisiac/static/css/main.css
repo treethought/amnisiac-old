@@ -118,8 +118,9 @@ a:hover, a:focus {
 */    /*color: #ffd8fb;*/
     /*background-color: #5b2c56;*/
     margin: 0px auto;
-    font-size: 20;
+    font-size: 23;
     font-family: 'Gloria Hallelujah', cursive;
+    /*font-family: 'Kreon';*/
     height: 500px;
    /*border: 2px solid #5b2c56;*/
    overflow: scroll;
@@ -133,7 +134,8 @@ h1 {
 }
 
 h3 {
-    font-family: 'Kreon', serif;
+    /*font-family: 'Kreon', serif;*/
+    font-family: 'Comfortaa', cursive;
 }
 
 /*.page-title {
