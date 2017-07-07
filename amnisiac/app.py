@@ -3,7 +3,7 @@
 from flask import Flask, render_template
 
 
-from amnisiac import commands, main, user
+from amnisiac import commands, main, user, api
 from amnisiac.assets import assets
 from amnisiac.extensions import admin, bcrypt, bootstrap, db, debug_toolbar, login_manager, migrate # , cach, csrf_protect
 from amnisiac.settings import ProdConfig
@@ -50,6 +50,7 @@ def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(main.views.main_blueprint)
     app.register_blueprint(user.views.user_blueprint)
+    app.register_blueprint(api.resources.api_blueprint)
     return None
     
 
