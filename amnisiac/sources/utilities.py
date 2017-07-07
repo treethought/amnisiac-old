@@ -27,19 +27,19 @@ def item_from_sc(resource):
     item.url = resource.permalink_url
     return item
 
-def generate_items(reddit_posts, sc_tracks):
+def generate_items(reddit_posts=None, sc_tracks=None):
     items, reddit_items, sc_items = [], [], []
 
     # only doing yt, bc video_id will be '' for non-yt domains
     # used to check for yt domain in feed.html, but filtering here now
     # passing 'id' to template as item.track_id now, not video_id
 
-    for post in reddit_posts:
+    for post in reddit_posts or []:
         if 'you' in post.domain and post.video_id:
             item = item_from_reddit(post)
             reddit_items.append(item)
 
-    for track in sc_tracks:
+    for track in sc_tracks or []:
         item = item_from_sc(track)
         sc_items.append(item)
 
