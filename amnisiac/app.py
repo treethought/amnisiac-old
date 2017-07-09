@@ -5,7 +5,7 @@ from flask import Flask, render_template
 
 from amnisiac import commands, main, user, api
 from amnisiac.assets import assets
-from amnisiac.extensions import admin, bcrypt, bootstrap, db, debug_toolbar, login_manager, migrate # , cach, csrf_protect
+from amnisiac.extensions import admin, bcrypt, bootstrap, cors, db, debug_toolbar, login_manager, migrate # , cach, csrf_protect
 from amnisiac.settings import ProdConfig
 from amnisiac.models import User, Feed, Item
 from amnisiac.utils import AdminModelView
@@ -43,6 +43,7 @@ def register_extensions(app):
     login_manager.init_app(app)
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
+    cors.init_app(app, resources={r"/api/*": {"origins": "*"}})
     return None
 
 
