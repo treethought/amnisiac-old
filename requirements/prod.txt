@@ -8,6 +8,8 @@ Jinja2==2.9.6
 itsdangerous==0.24
 click>=5.0
 
+# Rest API
+Flask-RESTful==0.3.6
 Flask-Cors==3.0.3
 
 # Admin
