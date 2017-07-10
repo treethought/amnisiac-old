@@ -56,7 +56,7 @@ class Search(Resource):
         sc_tracks = sc.fetch_tracks(sc_artists)
 
         items = generate_items(reddit_posts, sc_tracks)
-        return items
+        # return items
         return [i for i in items if i]
 
 
