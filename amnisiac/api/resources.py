@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
+from flask_jwt import jwt_required, current_identity
 
 from amnisiac.sources import reddit, sc
 from amnisiac.sources.utilities import generate_items
@@ -10,7 +11,6 @@ api = Api(api_blueprint)
 parser = reqparse.RequestParser()
 parser.add_argument('reddit_query')
 parser.add_argument('sc_query')
-
 
 
 item_fields = {
@@ -25,7 +25,7 @@ item_fields = {
     'date_saved': fields.DateTime,
     'source': fields.String,
     'subreddit': fields.String
-}   
+}
 
 
 class HelloWorld(Resource):
@@ -33,14 +33,31 @@ class HelloWorld(Resource):
         return {'hello': 'world'}
 
 
+class RedditSources(Resource):
+    def get(self):
+        sub_names = []
+        subs = reddit.wiki_subs('music', 'musicsubreddits')
+        for i in subs:
+            print(i)
+            sub_names.append(i)
+        return sub_names
+
+        for s in subs:
+            name = '/r/{}'.format(s)
+            choice = (name, name)
+            sub_names.append(choice)  # choices must be tuples
+        return sub_names
+
+
 class SearchReddit(Resource):
     @marshal_with(item_fields)
     def get(self, query):
         subreddits = query.split('+')
-        reddit_posts = reddit.fetch_submissions(subreddits) # praw submission objects
+        reddit_posts = reddit.fetch_submissions(subreddits)  # praw submission objects
         items = generate_items(reddit_posts)  # custom objects
         # return filter(lambda i: i is not None, items)
         return [i for i in items if i]
+
 
 class Search(Resource):
     @marshal_with(item_fields)
@@ -59,9 +76,17 @@ class Search(Resource):
         # return items
         return [i for i in items if i]
 
+class ProtectedResource(Resource):
+    method_decorators = [jwt_required()]
+
+class User(Resource):
+    def get(self):
+        return ['yes']
 
 
+api.add_resource(User, '/user')
 
 api.add_resource(HelloWorld, '/')
+api.add_resource(RedditSources, '/reddit/sources')
 api.add_resource(SearchReddit, '/reddit/<string:query>')
 api.add_resource(Search, '/search')  # queried using /search
