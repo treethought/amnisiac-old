@@ -79,12 +79,13 @@ class Search(Resource):
 class ProtectedResource(Resource):
     method_decorators = [jwt_required()]
 
-class User(Resource):
+class User(ProtectedResource):
+    @marshal_with(item_fields)
     def get(self):
-        return ['yes']
+        return current_identity.favorites
 
 
-api.add_resource(User, '/user')
+api.add_resource(User, '/users')
 
 api.add_resource(HelloWorld, '/')
 api.add_resource(RedditSources, '/reddit/sources')
