@@ -27,6 +27,19 @@ item_fields = {
     'subreddit': fields.String
 }
 
+feed_fields = {
+    'name': fields.String,
+    'url': fields.String,
+    'domain': fields.String,
+    'items': fields.List(fields.Nested(item_fields))
+}
+
+user_fields = {
+    'id': fields.String,
+    'username': fields.String,
+    'feeds': fields.List(fields.Nested(feed_fields)),
+    'favorites': fields.List(fields.Nested(item_fields))
+}
 
 class HelloWorld(Resource):
     def get(self):
@@ -76,13 +89,15 @@ class Search(Resource):
         # return items
         return [i for i in items if i]
 
+
 class ProtectedResource(Resource):
     method_decorators = [jwt_required()]
 
+
 class User(ProtectedResource):
-    @marshal_with(item_fields)
+    @marshal_with(user_fields)
     def get(self):
-        return current_identity.favorites
+        return current_identity
 
 
 api.add_resource(User, '/users')
