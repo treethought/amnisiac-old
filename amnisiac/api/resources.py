@@ -2,8 +2,10 @@ from flask import Blueprint, request
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
 from flask_jwt import jwt_required, current_identity
 
+from amnisiac.extensions import db
 from amnisiac.sources import reddit, sc
 from amnisiac.sources.utilities import generate_items
+from amnisiac.models import Item, get_or_create
 
 api_blueprint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(api_blueprint)
@@ -85,7 +87,7 @@ class Search(Resource):
         sc_artists = sc_query.split('+')
         sc_tracks = sc.fetch_tracks(sc_artists)
 
-        items = generate_items(reddit_posts, sc_tracks)
+        items = generate_items(reddit_posts, sc_tracks) # adds to db
         # return items
         return [i for i in items if i]
 
@@ -99,8 +101,35 @@ class User(ProtectedResource):
     def get(self):
         return current_identity
 
+class Favorite(ProtectedResource):
+    """Add or remove item from favorites favorites"""
+
+    def post(self):
+        item_obj = request.get_json()['item']
+        track_id, source = item_obj['track_id'], item_obj['source']
+        item = get_or_create(db.session, Item, track_id=track_id, source=source)
+        item.raw_title = item_obj['raw_title']  # title seperate bc title may change with post
+        item.domain = item_obj['domain']
+        item.url = item_obj['url']
+        user = current_identity
+
+        if item in user.favorites:
+            user.favorites.remove(item)
+            db.session.add(item)
+            db.session.add(user)
+            db.session.commit()
+            return {'action': 'removed'}
+
+        user.favorites.append(item)
+        db.session.add(item)
+        db.session.add(user)
+        db.session.commit()
+        return {'action': 'saved'}
+
+
 
 api.add_resource(User, '/users')
+api.add_resource(Favorite, '/users/favorites')
 
 api.add_resource(HelloWorld, '/')
 api.add_resource(RedditSources, '/reddit/sources')
