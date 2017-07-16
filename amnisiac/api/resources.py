@@ -104,27 +104,42 @@ class User(ProtectedResource):
 class Favorite(ProtectedResource):
     """Add or remove item from favorites favorites"""
 
-    def post(self):
-        item_obj = request.get_json()['item']
+    def parse_item(self, item_obj):
         track_id, source = item_obj['track_id'], item_obj['source']
-        item = get_or_create(db.session, Item, track_id=track_id, source=source)
-        item.raw_title = item_obj['raw_title']  # title seperate bc title may change with post
-        item.domain = item_obj['domain']
-        item.url = item_obj['url']
-        user = current_identity
+        return get_or_create(db.session, Item, track_id=track_id, source=source)
 
+    @marshal_with(user_fields)
+    def put(self):
+        """Remove item from favorites and return the updated User object"""
+        print('Deleting item')
+        user = current_identity
+        item_obj = request.get_json()['item']
+        item = self.parse_item(item_obj)
         if item in user.favorites:
             user.favorites.remove(item)
             db.session.add(item)
             db.session.add(user)
             db.session.commit()
-            return {'action': 'removed'}
+        return current_identity
 
-        user.favorites.append(item)
-        db.session.add(item)
-        db.session.add(user)
-        db.session.commit()
-        return {'action': 'saved'}
+
+    @marshal_with(user_fields)
+    def post(self):
+        """Save item to favorites and return the updated User object"""
+        item_obj = request.get_json()['item']
+        item = self.parse_item(item_obj)
+        item.raw_title = item_obj['raw_title']  # title seperate bc title may change with post
+        item.domain = item_obj['domain']
+        item.url = item_obj['url']
+        user = current_identity
+
+        if item not in user.favorites:
+            user.favorites.append(item)
+            db.session.add(item)
+            db.session.add(user)
+            db.session.commit()
+
+        return current_identity
 
 
 
