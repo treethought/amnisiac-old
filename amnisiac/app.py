@@ -24,7 +24,6 @@ def create_app(config_object=ProdConfig):
     register_shellcontext(app)
     register_commands(app)
     register_admin(app)  # after sqlalchemy init (db
-    register_jwt_auth(app)
     return app
 
 def register_admin(app):
@@ -32,13 +31,6 @@ def register_admin(app):
     admin.add_view(AdminModelView(Feed, db.session, endpoint='feed_admin'))
     admin.add_view(AdminModelView(Item, db.session, endpoint='item_admin'))
     admin.add_view(AdminModelView(User, db.session, endpoint='user_admin'))
-
-
-def register_jwt_auth(app):
-    from amnisiac.api.auth import authenticate, identify
-    jwt.init_app(app)
-
-
 
 def register_extensions(app):
     """Register Flask extensions."""
@@ -52,6 +44,7 @@ def register_extensions(app):
     debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     cors.init_app(app, resources={r"/*": {"origins": "*"}})
+    jwt.init_app(app)
     return None
 
 
