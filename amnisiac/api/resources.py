@@ -1,11 +1,12 @@
 from flask import Blueprint, request
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
-from flask_jwt import jwt_required, current_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 
-from amnisiac.extensions import db
+
+from amnisiac.extensions import db, bcrypt
 from amnisiac.sources import reddit, sc
 from amnisiac.sources.utilities import generate_items
-from amnisiac.models import Item, get_or_create
+from amnisiac.models import Item, get_or_create, User
 
 api_blueprint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(api_blueprint)
@@ -93,13 +94,17 @@ class Search(Resource):
 
 
 class ProtectedResource(Resource):
-    method_decorators = [jwt_required()]
+    method_decorators = [jwt_required]
 
 
-class User(ProtectedResource):
+class UserResource(ProtectedResource):
     @marshal_with(user_fields)
     def get(self):
-        return current_identity
+        # jwt_extended requires json serializable identity
+        # so need to perform query from username
+        username = get_jwt_identity()
+        user = User.query.filter(User.username == username).scalar()
+        return user
 
 class Favorite(ProtectedResource):
     """Add or remove item from favorites favorites"""
@@ -112,7 +117,7 @@ class Favorite(ProtectedResource):
     def put(self):
         """Remove item from favorites and return the updated User object"""
         print('Deleting item')
-        user = current_identity
+        user = get_jwt_identity()
         item_obj = request.get_json()['item']
         item = self.parse_item(item_obj)
         if item in user.favorites:
@@ -120,7 +125,7 @@ class Favorite(ProtectedResource):
             db.session.add(item)
             db.session.add(user)
             db.session.commit()
-        return current_identity
+        return get_jwt_identity()
 
 
     @marshal_with(user_fields)
@@ -131,7 +136,7 @@ class Favorite(ProtectedResource):
         item.raw_title = item_obj['raw_title']  # title seperate bc title may change with post
         item.domain = item_obj['domain']
         item.url = item_obj['url']
-        user = current_identity
+        user = get_jwt_identity()
 
         if item not in user.favorites:
             user.favorites.append(item)
@@ -139,11 +144,23 @@ class Favorite(ProtectedResource):
             db.session.add(user)
             db.session.commit()
 
-        return current_identity
+        return get_jwt_identity()
+
+class Auth(Resource):
+    """docstring for Auth"""
+
+    def post(self):
+        username = request.json.get('username', None)
+        password = request.json.get('password', None)
+        user = User.query.filter(User.username == username).scalar()
+        if user and bcrypt.check_password_hash(user.password, password):
+            return {'access_token': create_access_token(identity=username)}
 
 
+api.add_resource(Auth, '/auth')
 
-api.add_resource(User, '/users')
+
+api.add_resource(UserResource, '/users')
 api.add_resource(Favorite, '/users/favorites')
 
 api.add_resource(HelloWorld, '/')
