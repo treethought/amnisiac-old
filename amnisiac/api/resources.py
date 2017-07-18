@@ -44,6 +44,12 @@ user_fields = {
     'favorites': fields.List(fields.Nested(item_fields))
 }
 
+def user_from_identity():
+    """Returns the User model object of the current jwt identity"""
+    username = get_jwt_identity()
+    return User.query.filter(User.username == username).scalar()
+
+
 class HelloWorld(Resource):
     def get(self):
         return {'hello': 'world'}
@@ -102,9 +108,7 @@ class UserResource(ProtectedResource):
     def get(self):
         # jwt_extended requires json serializable identity
         # so need to perform query from username
-        username = get_jwt_identity()
-        user = User.query.filter(User.username == username).scalar()
-        return user
+        return user_from_identity()
 
 class Favorite(ProtectedResource):
     """Add or remove item from favorites favorites"""
@@ -117,7 +121,7 @@ class Favorite(ProtectedResource):
     def put(self):
         """Remove item from favorites and return the updated User object"""
         print('Deleting item')
-        user = get_jwt_identity()
+        user = user_from_identity()
         item_obj = request.get_json()['item']
         item = self.parse_item(item_obj)
         if item in user.favorites:
@@ -125,7 +129,7 @@ class Favorite(ProtectedResource):
             db.session.add(item)
             db.session.add(user)
             db.session.commit()
-        return get_jwt_identity()
+        return user_from_identity()
 
 
     @marshal_with(user_fields)
@@ -136,7 +140,7 @@ class Favorite(ProtectedResource):
         item.raw_title = item_obj['raw_title']  # title seperate bc title may change with post
         item.domain = item_obj['domain']
         item.url = item_obj['url']
-        user = get_jwt_identity()
+        user = user_from_identity()
 
         if item not in user.favorites:
             user.favorites.append(item)
@@ -144,7 +148,7 @@ class Favorite(ProtectedResource):
             db.session.add(user)
             db.session.commit()
 
-        return get_jwt_identity()
+        return user
 
 class Auth(Resource):
     """docstring for Auth"""
