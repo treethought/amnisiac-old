@@ -1,7 +1,7 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_restful import Api, Resource, reqparse, fields, marshal_with
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
-
+from flask_jwt_extended import jwt_required, jwt_refresh_token_required, get_jwt_identity, create_access_token, create_refresh_token
+from flask_login import login_manager
 
 from amnisiac.extensions import db, bcrypt
 from amnisiac.sources import reddit, sc
@@ -44,6 +44,7 @@ user_fields = {
     'favorites': fields.List(fields.Nested(item_fields))
 }
 
+
 def user_from_identity():
     """Returns the User model object of the current jwt identity"""
     username = get_jwt_identity()
@@ -75,7 +76,8 @@ class SearchReddit(Resource):
     @marshal_with(item_fields)
     def get(self, query):
         subreddits = query.split('+')
-        reddit_posts = reddit.fetch_submissions(subreddits)  # praw submission objects
+        reddit_posts = reddit.fetch_submissions(
+            subreddits)  # praw submission objects
         items = generate_items(reddit_posts)  # custom objects
         # return filter(lambda i: i is not None, items)
         return [i for i in items if i]
@@ -94,7 +96,7 @@ class Search(Resource):
         sc_artists = sc_query.split('+')
         sc_tracks = sc.fetch_tracks(sc_artists)
 
-        items = generate_items(reddit_posts, sc_tracks) # adds to db
+        items = generate_items(reddit_posts, sc_tracks)  # adds to db
         # return items
         return [i for i in items if i]
 
@@ -109,6 +111,7 @@ class UserResource(ProtectedResource):
         # jwt_extended requires json serializable identity
         # so need to perform query from username
         return user_from_identity()
+
 
 class Favorite(ProtectedResource):
     """Add or remove item from favorites favorites"""
@@ -131,13 +134,13 @@ class Favorite(ProtectedResource):
             db.session.commit()
         return user_from_identity()
 
-
     @marshal_with(user_fields)
     def post(self):
         """Save item to favorites and return the updated User object"""
         item_obj = request.get_json()['item']
         item = self.parse_item(item_obj)
-        item.raw_title = item_obj['raw_title']  # title seperate bc title may change with post
+        # title seperate bc title may change with post
+        item.raw_title = item_obj['raw_title']
         item.domain = item_obj['domain']
         item.url = item_obj['url']
         user = user_from_identity()
@@ -150,18 +153,37 @@ class Favorite(ProtectedResource):
 
         return user
 
-class Auth(Resource):
-    """docstring for Auth"""
 
-    def post(self):
-        username = request.json.get('username', None)
-        password = request.json.get('password', None)
-        user = User.query.filter(User.username == username).scalar()
-        if user and bcrypt.check_password_hash(user.password, password):
-            return {'access_token': create_access_token(identity=username)}
+# class Auth(Resource):
+#     """docstring for Auth"""
+
+#     def post(self):
+#         username = request.json.get('username', None)
+#         password = request.json.get('password', None)
+#         user = User.query.filter(User.username == username).scalar()
+#         if user and bcrypt.check_password_hash(user.password, password):
+#             return {'access_token': create_access_token(identity=username)}
 
 
-api.add_resource(Auth, '/auth')
+@api_blueprint.route('/auth', methods=['POST'])
+def login():
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+    user = User.query.filter(User.username == username).scalar()
+    if user and bcrypt.check_password_hash(user.password, password):
+        resp = {
+            'access_token': create_access_token(identity=username),
+            'refresh_token': create_refresh_token(identity=username)
+        }
+        return jsonify(resp), 200
+
+
+@api_blueprint.route('/refresh', methods=['POST'])
+@jwt_refresh_token_required
+def refresh():
+    current_identity = get_jwt_identity() # this is username used for jwt tokens, not the User object
+    resp = {'access_token': create_access_token(identity=current_identity)}
+    return jsonify(resp), 200
 
 
 api.add_resource(UserResource, '/users')
