@@ -72,6 +72,19 @@ class RedditSources(Resource):
         return sub_names
 
 
+@api_blueprint.route('/sc_autocomplete', methods=['GET'])
+def autocomplete():
+    results = []
+    term = request.args.get('q')
+    for user in sc.search_user(term):
+        if term.lower() in user.username.lower():
+            results.append(user.username)
+
+    return jsonify(results=results)
+
+
+
+
 class SearchReddit(Resource):
     @marshal_with(item_fields)
     def get(self, query):
