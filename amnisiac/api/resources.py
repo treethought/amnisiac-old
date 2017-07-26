@@ -61,7 +61,6 @@ class RedditSources(Resource):
         sub_names = []
         subs = reddit.wiki_subs('music', 'musicsubreddits')
         for i in subs:
-            print(i)
             sub_names.append(i)
         return sub_names
 
@@ -189,6 +188,24 @@ def login():
             'refresh_token': create_refresh_token(identity=username)
         }
         return jsonify(resp), 200
+
+
+@api_blueprint.route('/register', methods=['POST'])
+def register():
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+    instance = db.session.query(User).filter_by(username=username).first()
+
+    if instance is None:
+        instance = User(username=username, password=password)
+        db.session.add(instance)
+        db.session.commit()
+
+    resp = {
+        'access_token': create_access_token(identity=username),
+        'refresh_token': create_refresh_token(identity=username)
+    }
+    return jsonify(resp), 200
 
 
 @api_blueprint.route('/refresh', methods=['POST'])
