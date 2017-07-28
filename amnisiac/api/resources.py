@@ -6,7 +6,7 @@ from flask_login import login_manager
 from amnisiac.extensions import db, bcrypt
 from amnisiac.sources import reddit, sc
 from amnisiac.sources.utilities import generate_items
-from amnisiac.models import Item, get_or_create, User
+from amnisiac.models import Item, get_or_create, User, Feed
 
 api_blueprint = Blueprint('api', __name__, url_prefix='/api')
 api = Api(api_blueprint)
@@ -125,6 +125,57 @@ class UserResource(ProtectedResource):
         return user_from_identity()
 
 
+class Source(ProtectedResource):
+    """ Add or remove sources from current user"""
+
+    @marshal_with(user_fields)
+    def post(self):
+        user = user_from_identity()
+        args = request.get_json()['params']
+        reddit_query = args.get('reddit_query') or ''
+        sc_query = args.get('sc_query') or ''
+
+        subreddits = reddit_query.split('+')
+        sc_artists = sc_query.split('+')
+
+        for source in filter(None, subreddits):
+            name, url = source, 'http://reddit.com' + source
+            feed = get_or_create(db.session, Feed, name=name,
+                                 url=url, domain='reddit')
+            if feed not in user.feeds:
+                print('adding {} to user feeds'.format(feed.name))
+                user.feeds.append(feed)
+
+        for source in filter(None, sc_artists):
+            artist = sc.get_user(source)
+            name, url = source, artist.permalink_url
+            feed = get_or_create(db.session, Feed, name=name, url=url, domain='sc')
+            if feed not in user.feeds:
+                user.feeds.append(feed)
+
+        db.session.add(user)
+        db.session.commit()
+        return user
+
+    def delete(self):
+        form = RedditSearchForm(request.form)
+        selected = form.follow_sources.data
+        user = current_user
+        current_feeds = user.feeds
+        for s in selected:
+            feed = get_or_create(db.session, Feed, name=s)
+            try:
+                current_feeds.remove(feed)
+            except ValueError:
+                raise  # or scream: thing not in some_list!
+            except AttributeError:
+                raise  # call security, some_list not quacking like a list!
+
+        user.feeds = current_feeds
+        db.session.add(user)
+        db.session.commit()
+        return redirect(url_for('user.manage_sources'))
+
 class Favorite(ProtectedResource):
     """Add or remove item from favorites favorites"""
 
@@ -218,6 +269,7 @@ def refresh():
 
 api.add_resource(UserResource, '/users')
 api.add_resource(Favorite, '/users/favorites')
+api.add_resource(Source, '/users/sources')
 
 api.add_resource(HelloWorld, '/')
 api.add_resource(RedditSources, '/reddit/sources')
