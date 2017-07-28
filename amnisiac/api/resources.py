@@ -139,7 +139,8 @@ class Source(ProtectedResource):
         sc_artists = sc_query.split('+')
 
         for source in filter(None, subreddits):
-            name, url = source, 'http://reddit.com' + source
+            source_name = '/r/{}'.format(source)
+            name, url = source_name, 'http://reddit.com' + source_name
             feed = get_or_create(db.session, Feed, name=name,
                                  url=url, domain='reddit')
             if feed not in user.feeds:
@@ -157,15 +158,16 @@ class Source(ProtectedResource):
         db.session.commit()
         return user
 
-    def delete(self):
-        form = RedditSearchForm(request.form)
-        selected = form.follow_sources.data
-        user = current_user
+    @marshal_with(user_fields)
+    def put(self):
+        user = user_from_identity()
+        args = request.get_json()['params']
+        source_name = args.get('source')
         current_feeds = user.feeds
-        for s in selected:
-            feed = get_or_create(db.session, Feed, name=s)
+        if source_name:
+            source = get_or_create(db.session, Feed, name=source_name)
             try:
-                current_feeds.remove(feed)
+                current_feeds.remove(source)
             except ValueError:
                 raise  # or scream: thing not in some_list!
             except AttributeError:
@@ -174,7 +176,7 @@ class Source(ProtectedResource):
         user.feeds = current_feeds
         db.session.add(user)
         db.session.commit()
-        return redirect(url_for('user.manage_sources'))
+        return user
 
 class Favorite(ProtectedResource):
     """Add or remove item from favorites favorites"""
