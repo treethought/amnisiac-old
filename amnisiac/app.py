@@ -4,7 +4,7 @@ from flask import Flask
 
 
 from amnisiac import commands, auth, reddit, user
-from amnisiac.extensions import bcrypt, cors, db, jwt, login_manager, migrate
+from amnisiac.extensions import bcrypt, cors, db, jwt, migrate
 from amnisiac.settings import ProdConfig
 from amnisiac.models import User
 
@@ -27,7 +27,6 @@ def register_extensions(app):
     """Register Flask extensions."""
     bcrypt.init_app(app)
     db.init_app(app)
-    login_manager.init_app(app)
     migrate.init_app(app, db)
     cors.init_app(app, resources={r"/*": {"origins": "*"}})
     jwt.init_app(app)

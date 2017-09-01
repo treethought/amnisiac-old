@@ -11,7 +11,6 @@ from flask_jwt_extended import JWTManager
 # admin = Admin()
 bcrypt = Bcrypt()
 # csrf_protect = CSRFProtect()
-login_manager = LoginManager()
 db = SQLAlchemy()
 migrate = Migrate()
 cache = Cache()
