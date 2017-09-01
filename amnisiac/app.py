@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 """The app module, containing the app factory function."""
-from flask import Flask, render_template
+from flask import Flask
 
 
-from amnisiac import commands, main, user, api
-from amnisiac.assets import assets
-from amnisiac.extensions import admin, bcrypt, bootstrap, cors, db, debug_toolbar, jwt, login_manager, migrate # , cach, csrf_protect
+from amnisiac import commands, auth, reddit, user
+from amnisiac.extensions import bcrypt, cors, db, jwt, login_manager, migrate
 from amnisiac.settings import ProdConfig
-from amnisiac.models import User, Feed, Item
-from amnisiac.utils import AdminModelView
+from amnisiac.models import User
 
 
 def create_app(config_object=ProdConfig):
@@ -20,28 +18,16 @@ def create_app(config_object=ProdConfig):
     app.config.from_object(config_object)
     register_extensions(app)
     register_blueprints(app)
-    register_errorhandlers(app)
     register_shellcontext(app)
     register_commands(app)
-    register_admin(app)  # after sqlalchemy init (db
     return app
 
-def register_admin(app):
-    admin.init_app(app)
-    admin.add_view(AdminModelView(Feed, db.session, endpoint='feed_admin'))
-    admin.add_view(AdminModelView(Item, db.session, endpoint='item_admin'))
-    admin.add_view(AdminModelView(User, db.session, endpoint='user_admin'))
 
 def register_extensions(app):
     """Register Flask extensions."""
-    assets.init_app(app)
     bcrypt.init_app(app)
-    bootstrap.init_app(app)
-    # cache.init_app(app)
     db.init_app(app)
-    # csrf_protect.init_app(app)
     login_manager.init_app(app)
-    debug_toolbar.init_app(app)
     migrate.init_app(app, db)
     cors.init_app(app, resources={r"/*": {"origins": "*"}})
     jwt.init_app(app)
@@ -50,22 +36,10 @@ def register_extensions(app):
 
 def register_blueprints(app):
     """Register Flask blueprints."""
-    app.register_blueprint(main.views.main_blueprint)
-    app.register_blueprint(user.views.user_blueprint)
-    app.register_blueprint(api.resources.api_blueprint)
-    return None
-    
+    app.register_blueprint(auth.resources.auth_blueprint)
+    app.register_blueprint(reddit.resources.reddit_blueprint)
+    app.register_blueprint(user.resources.user_blueprint)
 
-
-def register_errorhandlers(app):
-    """Register error handlers."""
-    def render_error(error):
-        """Render error template."""
-        # If a HTTPException, pull the `code` attribute; default to 500
-        error_code = getattr(error, 'code', 500)
-        return render_template('errors/{0}.html'.format(error_code)), error_code
-    for errcode in [401, 404, 500]:
-        app.errorhandler(errcode)(render_error)
     return None
 
 
