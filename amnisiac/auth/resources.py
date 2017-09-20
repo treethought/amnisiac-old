@@ -1,3 +1,4 @@
+import os
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_refresh_token_required, get_jwt_identity, \
     create_access_token, create_refresh_token
@@ -59,3 +60,8 @@ def refresh():
     current_identity = get_jwt_identity()
     resp = {'access_token': create_access_token(identity=current_identity)}
     return jsonify(resp), 200
+
+@auth_blueprint.route('/sc_client', methods=['GET'])
+def sc_client():
+    client_id = os.getenv('SOUNDCLOUD_CLIENT_ID')
+    return jsonify(client_id), 200
