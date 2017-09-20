@@ -3,9 +3,9 @@ from flask_restful import Api, Resource, reqparse, fields, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from amnisiac.extensions import db
-# from amnisiac.sources import sc
+from amnisiac.soundcloud import utils as sc
 
-from amnisiac.models import Item, get_or_create, User, Feed
+from amnisiac.models import Item, get_or_create, User, Feed, item_fields, user_fields, feed_fields
 
 user_blueprint = Blueprint('user', __name__, url_prefix='/users')
 api = Api(user_blueprint)
@@ -13,35 +13,6 @@ api = Api(user_blueprint)
 parser = reqparse.RequestParser()
 parser.add_argument('reddit_query')
 parser.add_argument('sc_query')
-
-
-item_fields = {
-    # 'id': fields.Integer,
-    'track_id': fields.String,
-    'raw_title': fields.String,
-    'title': fields.String,
-    'artist': fields.String,
-    'url': fields.String,
-    'domain': fields.String,
-    # 'date_published': fields.DateTime,
-    'date_saved': fields.DateTime,
-    'source': fields.String,
-    'subreddit': fields.String
-}
-
-feed_fields = {
-    'name': fields.String,
-    'url': fields.String,
-    'domain': fields.String,
-    'items': fields.List(fields.Nested(item_fields))
-}
-
-user_fields = {
-    'id': fields.String,
-    'username': fields.String,
-    'feeds': fields.List(fields.Nested(feed_fields)),
-    'favorites': fields.List(fields.Nested(item_fields))
-}
 
 
 def user_from_identity():
@@ -70,10 +41,10 @@ class Source(ProtectedResource):
         user = user_from_identity()
         args = request.get_json()['params']
         reddit_query = args.get('reddit_query') or ''
-        # sc_query = args.get('sc_query') or ''
+        sc_query = args.get('sc_query') or ''
 
         subreddits = reddit_query.split('+')
-        # sc_artists = sc_query.split('+')
+        sc_artists = sc_query.split('+')
 
         for source in filter(None, subreddits):
             source_name = '/r/{}'.format(source)
@@ -84,13 +55,13 @@ class Source(ProtectedResource):
                 print('adding {} to user feeds'.format(feed.name))
                 user.feeds.append(feed)
 
-        # for source in filter(None, sc_artists):
-        #     artist = sc.get_user(source)
-        #     name, url = source, artist.permalink_url
-        #     feed = get_or_create(
-        #         db.session, Feed, name=name, url=url, domain='sc')
-        #     if feed not in user.feeds:
-        #         user.feeds.append(feed)
+        for source in filter(None, sc_artists):
+            artist = sc.get_user(source)
+            name, url = source, artist.permalink_url
+            feed = get_or_create(
+                db.session, Feed, name=name, url=url, domain='sc')
+            if feed not in user.feeds:
+                user.feeds.append(feed)
 
         db.session.add(user)
         db.session.commit()
@@ -147,6 +118,9 @@ class Favorite(ProtectedResource):
 
         # seperate bc info may change with post and source
         # and track_id is the real identifier
+        # for k, v in item_json:
+        #     setattr(item, k, v)
+
         item.raw_title = item_json['raw_title']
         item.domain = item_json['domain']
         item.url = item_json['url']
