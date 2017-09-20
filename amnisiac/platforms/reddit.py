@@ -1,21 +1,13 @@
-# project/server/reddit/api.py
-
+# amnisiac/platforms/reddit.py
 import os
-import itertools
 from markdown import markdown
 import praw
 from bs4 import BeautifulSoup as bs
 
 
-from amnisiac.reddit.video_ids import get_video_id
-from amnisiac.extensions import db
-from amnisiac.models import Item, get_or_create
+from amnisiac.platforms.utils import get_video_id
 
-# Type Annotations #
-# from typing import List, Iterable
-# from praw.models import Submission
 
-# script
 reddit = praw.Reddit(client_id=os.getenv('REDDIT_CLIENT_ID'),
                      client_secret=os.getenv('REDDIT_CLIENT_SECRET'),
                      # password='password', # not needed for read only
@@ -111,61 +103,3 @@ def split_by_domain(submissions):
     domains['vimeo'] = [p for p in submissions if 'vim' in p.domain]
 
     return domains
-
-def item_from_reddit(submission):
-    """Submission requires video_id, added to object inside hot_posts"""
-
-    item = get_or_create(
-        db.session, Item, track_id=submission.video_id, source='reddit')
-    item.subreddit = submission.subreddit_name_prefixed
-    item.url = submission.url
-    item.domain = submission.domain
-    item.raw_title = submission.title
-    db.session.add(item)
-    db.session.commit()
-    return item
-
-
-def item_from_sc(resource):
-
-    item = get_or_create(db.session, Item, track_id=str(resource.id), source='sc')
-    item.artist = resource.user['username']
-    item.title = resource.title
-    item.raw_title = '{} - {}'.format(resource.user['username'], resource.title)
-    item.source = 'sc'
-    item.url = resource.permalink_url
-    item.domain = 'soundcloud.com'
-    item.uri = resource.uri
-    item.duration = resource.duration
-    item.embeddable_by = resource.embeddable_by
-    item.artwork_url = resource.artwork_url
-    item.streamable = resource.streamable
-    item.created_at = resource.created_at
-    item.genre = resource.genre
-    item.waveform_url = resource.waveform_url
-    item.stream_url = resource.stream_url
-    db.session.add(item)
-    db.session.commit()
-    return item
-
-
-def generate_items(reddit_posts=None, sc_tracks=None):
-    items, reddit_items, sc_items = [], [], []
-
-    # only doing yt, bc video_id will be '' for non-yt domains
-    # used to check for yt domain in feed.html, but filtering here now
-    # passing 'id' to template as item.track_id now, not video_id
-
-    for post in reddit_posts or []:
-        if 'you' in post.domain and post.video_id:
-            item = item_from_reddit(post)
-            reddit_items.append(item)
-
-    for track in sc_tracks or []:
-        item = item_from_sc(track)
-        sc_items.append(item)
-
-    for i in list(itertools.zip_longest(reddit_items, sc_items)):
-        items.extend(i)
-
-    return items  # TODO: refactor into generator

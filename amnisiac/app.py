@@ -3,7 +3,7 @@
 from flask import Flask
 
 
-from amnisiac import commands, auth, reddit, user, soundcloud
+from amnisiac import commands, auth, user, platforms
 from amnisiac.extensions import bcrypt, cors, db, jwt, migrate
 from amnisiac.settings import ProdConfig
 from amnisiac.models import User
@@ -36,9 +36,8 @@ def register_extensions(app):
 def register_blueprints(app):
     """Register Flask blueprints."""
     app.register_blueprint(auth.resources.auth_blueprint)
-    app.register_blueprint(reddit.resources.reddit_blueprint)
     app.register_blueprint(user.resources.user_blueprint)
-    app.register_blueprint(soundcloud.resources.sc_blueprint)
+    app.register_blueprint(platforms.resources.platforms_blueprint)
 
     return None
 
