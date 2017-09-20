@@ -89,11 +89,6 @@ def hot_posts(sub):
     return result
 
 
-def get_audio(post_url):
-    if 'youtube' in post_url:
-        pass
-
-
 def wiki_subs(sub, wiki_name):
     """Returns the names of subreddits incldued in a sub's wiki markdown"""
 
@@ -126,7 +121,8 @@ def item_from_reddit(submission):
     item.url = submission.url
     item.domain = submission.domain
     item.raw_title = submission.title
-
+    db.session.add(item)
+    db.session.commit()
     return item
 
 
@@ -138,6 +134,18 @@ def item_from_sc(resource):
     item.raw_title = '{} - {}'.format(resource.user['username'], resource.title)
     item.source = 'sc'
     item.url = resource.permalink_url
+    item.domain = 'soundcloud.com'
+    item.uri = resource.uri
+    item.duration = resource.duration
+    item.embeddable_by = resource.embeddable_by
+    item.artwork_url = resource.artwork_url
+    item.streamable = resource.streamable
+    item.created_at = resource.created_at
+    item.genre = resource.genre
+    item.waveform_url = resource.waveform_url
+    item.stream_url = resource.stream_url
+    db.session.add(item)
+    db.session.commit()
     return item
 
 
