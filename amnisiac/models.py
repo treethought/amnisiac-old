@@ -1,9 +1,9 @@
 # amisiac/models.py
-
-
 import datetime
+from flask_restful import fields
 
 from amnisiac.extensions import db, bcrypt
+
 
 def get_or_create(session, model, **kwargs):
     instance = session.query(model).filter_by(**kwargs).first()
@@ -17,10 +17,13 @@ def get_or_create(session, model, **kwargs):
 
 
 associations = db.Table('feeds',
-    db.Column('feed_id', db.Integer, db.ForeignKey('feed.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('item_id', db.Integer, db.ForeignKey('item.id'))
-)
+                        db.Column('feed_id', db.Integer,
+                                  db.ForeignKey('feed.id')),
+                        db.Column('user_id', db.Integer,
+                                  db.ForeignKey('user.id')),
+                        db.Column('item_id', db.Integer,
+                                  db.ForeignKey('item.id'))
+                        )
 
 
 class User(db.Model):
@@ -90,6 +93,18 @@ class Item(db.Model):
     source = db.Column(db.String(), unique=False, nullable=False)
     subreddit = db.Column(db.String(), unique=False, nullable=True)
 
+    # for sc 
+    uri = db.Column(db.String(), unique=False, nullable=True)
+    duration = db.Column(db.Integer(), unique=False, nullable=True)
+    embeddable_by = db.Column(db.String(), unique=False, nullable=True)
+    artwork_url = db.Column(db.String(), unique=False, nullable=True)
+    streamable = db.Column(db.String(), unique=False, nullable=True)
+    created_at = db.Column(db.DateTime, unique=False, nullable=True)
+    genre = db.Column(db.String(), unique=False, nullable=True)
+    waveform_url = db.Column(db.String(), unique=False, nullable=True)
+    stream_url = db.Column(db.String(), unique=False, nullable=True)
+
+
     def __init__(self, track_id, source, subreddit=None, **kwargs):
         super(Item, self).__init__(**kwargs)
 
@@ -106,4 +121,41 @@ class Item(db.Model):
         return '<Item:{} from {}'.format(self.raw_title, self.feeds)
 
 
+# Fields used to structure API responses using marshal_with
+item_fields = {
+    # 'id': fields.Integer,
+    'track_id': fields.String,
+    'raw_title': fields.String,
+    'title': fields.String,
+    'artist': fields.String,
+    'url': fields.String,
+    'domain': fields.String,
+    # 'date_published': fields.DateTime,
+    'date_saved': fields.DateTime,
+    'source': fields.String,
+    'subreddit': fields.String,
+    # for sc
+    'uri': fields.String,
+    'duration': fields.String,
+    'embeddable_by': fields.String,
+    'artwork_url': fields.String,
+    'streamable': fields.String,
+    'created_at': fields.String,
+    'genre': fields.String,
+    'waveform_url': fields.String,
+    'stream_url': fields.String
+}
 
+feed_fields = {
+    'name': fields.String,
+    'url': fields.String,
+    'domain': fields.String,
+    'items': fields.List(fields.Nested(item_fields))
+}
+
+user_fields = {
+    'id': fields.String,
+    'username': fields.String,
+    'feeds': fields.List(fields.Nested(feed_fields)),
+    'favorites': fields.List(fields.Nested(item_fields))
+}
