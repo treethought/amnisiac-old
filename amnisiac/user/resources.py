@@ -1,11 +1,11 @@
 from flask import Blueprint, request
-from flask_restful import Api, Resource, reqparse, fields, marshal_with
+from flask_restful import Api, Resource, reqparse, marshal_with
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from amnisiac.extensions import db
-from amnisiac.soundcloud import utils as sc
+from amnisiac.platforms import sc
 
-from amnisiac.models import Item, get_or_create, User, Feed, item_fields, user_fields, feed_fields
+from amnisiac.models import Item, User, Feed, user_fields, get_or_create
 
 user_blueprint = Blueprint('user', __name__, url_prefix='/users')
 api = Api(user_blueprint)
