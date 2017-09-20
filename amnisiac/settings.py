@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Application configuration."""
 import os
+import datetime
 
 
 class Config(object):
@@ -31,11 +32,12 @@ class DevConfig(Config):
 
     ENV = 'dev'
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://cam@localhost:5432/music'
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'postgresql://cam@localhost:5432/music')
     DEBUG_TB_ENABLED = True
     ASSETS_DEBUG = True  # Don't bundle/minify static assets
     CACHE_TYPE = 'simple'  # Can be "memcached", "redis", etc.
     SEND_FILE_MAX_AGE_DEFAULT = 0 # for refeshing static files
+    # JWT_ACCESS_TOKEN_EXPIRES = datetime.timedelta(seconds=20) # for tesing refresh tokens
 
 
 class TestConfig(Config):
