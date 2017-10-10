@@ -1,6 +1,7 @@
 # amnisiac/platforms/utils.py
 import itertools
 from urllib.parse import urlparse, parse_qs
+import arrow
 
 from amnisiac.extensions import db
 from amnisiac.models import Item, get_or_create
@@ -8,13 +9,14 @@ from amnisiac.models import Item, get_or_create
 
 def item_from_reddit(submission):
     """Submission requires video_id, added to object inside hot_posts"""
-
     item = get_or_create(
         db.session, Item, track_id=submission.video_id, source='reddit')
     item.subreddit = submission.subreddit_name_prefixed
     item.url = submission.url
     item.domain = submission.domain
     item.raw_title = submission.title
+    item.r_created_utc = submission.created_utc
+    item.pub_date = arrow.get(submission.created_utc).timestamp
     db.session.add(item)
     db.session.commit()
     return item
@@ -23,6 +25,7 @@ def item_from_reddit(submission):
 def item_from_sc(resource):
 
     item = get_or_create(db.session, Item, track_id=str(resource.id), source='sc')
+
     item.artist = resource.user['username']
     item.title = resource.title
     item.raw_title = '{} - {}'.format(resource.user['username'], resource.title)
@@ -35,6 +38,7 @@ def item_from_sc(resource):
     item.artwork_url = resource.artwork_url
     item.streamable = resource.streamable
     item.created_at = resource.created_at
+    item.pub_date = arrow.get(resource.created_at, 'YYYY/MM/DD HH:mm:ss').timestamp
     item.genre = resource.genre
     item.waveform_url = resource.waveform_url
     item.stream_url = resource.stream_url
@@ -44,25 +48,20 @@ def item_from_sc(resource):
 
 
 def generate_items(reddit_posts=None, sc_tracks=None):
-    items, reddit_items, sc_items = [], [], []
+    items = []
 
-    # only doing yt, bc video_id will be '' for non-yt domains
-    # used to check for yt domain in feed.html, but filtering here now
-    # passing 'id' to template as item.track_id now, not video_id
+    for i in reddit_posts:
+        if 'you' in i.domain and i.video_id:
+            item = item_from_reddit(i)
+            items.append(item)
 
-    for post in reddit_posts or []:
-        if 'you' in post.domain and post.video_id:
-            item = item_from_reddit(post)
-            reddit_items.append(item)
+    for i in sc_tracks:
+        print('from sc')
+        item = item_from_sc(i)
+        items.append(item)
 
-    for track in sc_tracks or []:
-        item = item_from_sc(track)
-        sc_items.append(item)
-
-    for i in list(itertools.zip_longest(reddit_items, sc_items)):
-        items.extend(i)
-
-    return items  # TODO: refactor into generator
+    items = filter(None, items)
+    return sorted(items, key=lambda item: item.pub_date, reverse=True)
 
 
 def get_video_id(domain, url):
@@ -70,8 +69,12 @@ def get_video_id(domain, url):
         return vimeo_id(url)
     elif 'you' in domain:
         return youtube_id(url)
+    elif 'soundcloud' in domain:
+        # return soundcloud_id(url)
+        pass # TODO
     else:
         return ''
+
 
 
 def vimeo_id(url):

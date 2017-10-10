@@ -92,6 +92,7 @@ class Item(db.Model):
     date_saved = db.Column(db.DateTime, nullable=False)
     source = db.Column(db.String(), unique=False, nullable=False)
     subreddit = db.Column(db.String(), unique=False, nullable=True)
+    r_created_utc = db.Column(db.Integer(), nullable=True)
 
     # for sc 
     uri = db.Column(db.String(), unique=False, nullable=True)
@@ -104,6 +105,8 @@ class Item(db.Model):
     waveform_url = db.Column(db.String(), unique=False, nullable=True)
     stream_url = db.Column(db.String(), unique=False, nullable=True)
 
+    pub_date = db.Column(db.Integer(), nullable=True) # for sorting posts
+
 
     def __init__(self, track_id, source, subreddit=None, **kwargs):
         super(Item, self).__init__(**kwargs)
@@ -112,7 +115,7 @@ class Item(db.Model):
         self.source = source
         self.subreddit = subreddit
         self.date_saved = datetime.datetime.now()
-        # self.parse_raw_title()
+
 
     def parse_raw_title(self):
         pass
@@ -132,6 +135,7 @@ item_fields = {
     'domain': fields.String,
     # 'date_published': fields.DateTime,
     'date_saved': fields.DateTime,
+    'pub_date': fields.Integer,
     'source': fields.String,
     'subreddit': fields.String,
     # for sc

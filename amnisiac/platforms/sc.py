@@ -17,7 +17,7 @@ def get_user(name):
 def user_tracks(user, limit=None):
     try:
         endpoint = '/users/{}/tracks'.format(user.id)
-        for track in client.get(endpoint):
+        for track in client.get(endpoint, limit=5):
             yield track
     except AttributeError:
         print('No id found for {}'.format(user))
@@ -26,12 +26,12 @@ def user_tracks(user, limit=None):
 
 def fetch_tracks(artists):
     """ Generator yielding the internal dicts of track resources """
+    tracks = []
     for q in [q for q in artists if len(q) > 1]:
         artist = get_user(q.strip())
         for track in user_tracks(artist):
-            track_data = {'id': track.id, 'title': track.title,
-                          'stream': track.stream_url}
-            yield track
+            tracks.append(track)
+    return tracks
 
 
 def search_user(name):
